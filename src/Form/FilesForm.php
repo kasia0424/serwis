@@ -22,8 +22,14 @@ class FilesForm extends AbstractType
                 'constraints' => array(new Assert\Image())
             )
         )
-        ->add('save', 'submit', array('label' => 'Upload file'))
-        ->getForm();
+        ->add(
+            'flag',
+            'hidden', array(
+                'data' => $adId
+            )
+        );
+        // ->add('save', 'submit', array('label' => 'Upload file'))
+        // ->getForm();
     }
 
     public function getName()

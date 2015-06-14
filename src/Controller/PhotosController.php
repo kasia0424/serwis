@@ -92,13 +92,13 @@ class PhotosController implements ControllerProviderInterface
                 //try {
                     //$flag= true;
                     $data = $form->getData();
-                    var_dump($data);
+                    //var_dump($form);
                     $ad = $app['session']->get('ad');
                     //$adId = $form.a_id;
                     $post = $request->request->get('a_id');
-                    $post = $request->request->getForm();
+                    //$post = $request->request->getForm();
                     
-                    var_dump($post['a_id']);
+                    //var_dump($post['a_id']);
                     //var_dump($request);die();
                     
                     $files = $request->files->get($form->getName()); //sprawdzanie poprawnoœci danych!

@@ -13,5 +13,6 @@
     {% endfor %}
     <form action="{{ url('/photos/upload') }}" {{ form_enctype(form) }} method="post">
         {{ form_widget(form) }}
+        <input type="submit" name="submit" />
     </form>
 {% endblock %}
