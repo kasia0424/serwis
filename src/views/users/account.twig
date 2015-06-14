@@ -1,0 +1,69 @@
+{% extends 'base.twig' %}
+
+{% block title %}My account{% endblock %}
+
+{% block content %}
+    <div class="pull-right">
+        <h3 class="text-center"> Your account </h3>
+        <a href="{{ url('/user/view', {'id': info.id}) }}" title="View user" class="btn btn-primary btn-lg active" role="button" style="display:block;">View my data</a>
+        <a href="{{ url('/user/edit', {'id': info.id}) }}" title="Edit password" class="btn btn-primary btn-lg active" role="button" style="display:block;">Edit password</a>
+        <a href="{{ url('/user/number', {'id': info.id}) }}" title="Edit phone number" class="btn btn-primary btn-lg active" role="button" style="display:block;">Edit phone number</a>
+        {#<a href="{{ url('/user/password', {'id': info.id}) }}" title="Change passord" class="btn btn-primary btn-lg active" role="button" style="display:block;">Change your password</a>
+        #}<a href="{{ url('/user/delete', {'id': info.id}) }}" title="Delete user" onclick="return confirm('Sure you want to delete your account?')" class="btn btn-primary btn-lg active" role="button" style="display:block;">Delete account</a>
+    </div>
+
+    <h1 class="text-center" style="display:block;">
+        Your ads
+    </h1>
+    <div>
+    {% if ads|length > 0 %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Category</th>
+                <th>Title</th>
+                <th>Text</th>
+                <th>Date of post</th>
+                <th colspan="4">&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ad in ads %}
+                <tr>
+                    <td>{{ ad.category|e }}</td>
+                    <td>{{ ad.title|e }}</td>
+                    <td>{{ ad.text|e }}</td>
+                    <td>{{ ad.postDate|e }}</td>
+                    <td>
+                        <a href="{{ url('/ads/view', {'id': ad.id}) }}" title="View ad" class="btn btn-default btn-lg active" role="button">View</a>
+                    </td>
+                    <td>
+                        <a href="{{ url('/ads/edit', {'id': ad.id}) }}" title="Edit ad" class="btn btn-default btn-lg active" role="button">Edit</a>
+                    </td>
+                    <td>
+                        <a href="{{ url('/ads/delete', {'id': ad.id}) }}" title="Delete ad" onclick="return confirm('Sure you want to delete this ad?')" class="btn btn-default btn-lg active" role="button">Delete</a>
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div>
+            {% if paginator.page > 1 %}
+                {% set previous = (paginator.page - 1) %}
+                <a href="{{ url('/user/account', {'page': previous}) }}" title="{{ 'previous page'|trans }}"><img src="{{ app.request.basepath }}/media/arrow.png"  height="15px" width="50px" style="transform:rotate(180deg);"></a>
+            {%  endif %}
+
+            {% if paginator.page < paginator.pagesCount %}
+                {% set next = (paginator.page + 1) %}
+                <a href="{{ url('/user/account', {'page': next}) }}" title="{{ 'next page'|trans }}" class="pull-right"><img src="{{ app.request.basepath }}/media/arrow.png"  height="15px" width="50px"></a>
+            {% endif  %}
+        </div>
+    {% else %}
+        <p>
+            You have not added any advertisements yet.
+            <a href="{{ url('/ads/add') }}" title="Add ad" class="btn btn-default btn-lg active" role="button">Add your first ad</a>
+        </p>
+    {% endif %}
+    </div>
+{% endblock %}

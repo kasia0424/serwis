@@ -1,0 +1,6 @@
+<h1>Data</h1>
+<ul>
+    {% for row in data %}
+        <li>{{ row.name|upper }}, {{ row.email|e }}</li>
+    {% endfor %}
+</ul>

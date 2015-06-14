@@ -1,0 +1,16 @@
+{% extends 'base.twig' %}
+
+{% block title %}Add Ad{% endblock %}
+
+{% block content %}
+    <h1 class="text-center">
+        Add Ad
+    </h1>
+    <form action="#" method="post">
+        {{ form_widget(form) }}
+        <input type="submit" name="submit" />
+    </form>
+    <h4>
+        <a href="{{ url('/ads/') }}" title="ads index" class="label label-primary text-uppercase">Back to ads list</a>
+    </h4>
+{% endblock %}

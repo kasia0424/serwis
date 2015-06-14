@@ -1,0 +1,81 @@
+{% extends 'base.twig' %}
+
+{% block title %}Categories{% endblock %}
+
+{#
+{% block head %}
+    {{ parent() }}
+    <style type="text/css">
+        h1 { color: red; }
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>
+        Categories !
+    </h1>
+    <p>
+        Some static text.
+    </p>
+{% endblock %}
+
+#}
+{% block content %}
+    
+    <h1 class="text-center">
+        Categories list
+    </h1>
+    
+    {% if is_granted('ROLE_ADMIN') %}
+        <h4>
+            <a href="{{ url('/categories/add') }}" title="Add category" class="label label-primary text-uppercase">
+                Add category
+            </a>
+        </h4>
+    {% endif %}
+    
+    {%  if categories|length > 0 %}
+        <table  class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th >Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for cat in categories %}
+                <tr>
+                    <td>{{ cat.name|e }}</td>
+                    <td>{{ cat.description|e }}</td>
+                    <td>
+                        <a href="{{ url('/categories/view', {'id': cat.id}) }}" title="View category" class="btn btn-default btn-lg">View details</a>
+                    </td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>
+                            <a href="{{ url('/categories/edit', {'id': cat.id}) }}" title="Edit category" class="btn btn-default btn-lg">Edit</a>
+                        </td>
+                        <td>
+                            <a href="{{ url('/categories/delete', {'id': cat.id}) }}" title="Delete category" onclick="return confirm('Sure you want to delete this category? All ads from it will be moved to Pozostałe category.')" class="btn btn-default btn-lg">Delete</a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>
+            Categories not found.
+        </p>
+    {% endif %}
+    <div>
+        {% if paginator.page > 1 %}
+            {% set previous = (paginator.page - 1) %}
+            <a href="{{ url('/categories/', {'page': previous}) }}" title="{{ 'previous page'|trans }}"><img src="{{ app.request.basepath }}/media/arrow.png"  height="15" width="50" alt="black arrow" style="transform:rotate(180deg);"></a>
+        {%  endif %}
+
+        {% if paginator.page < paginator.pagesCount %}
+            {% set next = (paginator.page + 1) %}
+            <a href="{{ url('/categories/', {'page': next}) }}" title="{{ 'next page'|trans }}" class="pull-right"><img src="{{ app.request.basepath }}/media/arrow.png"  height="15" width="50" alt="black arrow"></a>
+        {% endif  %}
+    </div>
+{% endblock %}

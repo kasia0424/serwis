@@ -1,0 +1,18 @@
+{% extends 'errors/layout.twig' %}
+
+{% block title %}Forbbiden{% endblock %}
+
+{% block content %}
+
+    {% for flashMessage in app.session.getFlashBag.get('message') %}
+        <div class="alert alert-{{ flashMessage.type }}">
+            {{ flashMessage.content }}
+        </div>
+    {% endfor %}
+
+    <h1>Forbbiden!</h1>
+    <p>Sorry, you don't have access to this page.</p>
+    <p>Wrong neighborhood - don't mess around!</p>
+    <p><a href="{{ url('/ads/') }}" title="Home">Back to the homepage.</a></p>
+
+{% endblock %}

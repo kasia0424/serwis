@@ -1,0 +1,17 @@
+{% extends 'base.twig' %}
+
+{% block title %}Upload file{% endblock %}
+
+{% block content %}
+    <h1 class="text-center">
+        Upload file
+    </h1>
+    {% for flashMessage in app.session.getFlashBag.get('message') %}
+        <div class="alert alert-{{ flashMessage.type }}">
+            {{ flashMessage.content }}
+        </div>
+    {% endfor %}
+    <form action="{{ url('/photos/upload') }}" {{ form_enctype(form) }} method="post">
+        {{ form_widget(form) }}
+    </form>
+{% endblock %}

@@ -1,0 +1,41 @@
+//-szalone adresy - zakomentowaæ debuga
+
+-zdjêcia - do ads'ów
+-upload - móc do swojego
+
+//-user - change password == edit user ?
+//-dodawanie userów - w menu + dla anonimów
+//-logout - alert -> pop-up ->enough?
+//-numery tel -> do usera, do user edita, do ads'ów
+
+//-panel admina - usuwanie userów - adsy do admina? czy out? -deleteUsersAds
+//-porcjowanie wyników na stronie - userzy dla admina
+
+//-edit password
+
+-numer telefonu - 10liczb +litera
+-og³oszenia - same liczby
+//-edit adsa - textarea
+-delete add -> forbbiden nie twoja
+-edit telefonu -> nic nie zmienia
+-delete curr_user forbbiden
+-pozostale != delete
+-admin != edit pass i nr telz view
+-all adsy usera dla innych
+-current user tel przy adsach
+
+-regu³y firewall !!
+
+-style.css
+
+-dokumentacja !!
+
+KONIEC: odkomentowaæ 500 w index.php!
++sprawdziæ dzia³anie
++zakomentowaæ debuga
+
+->CodeSniffer -done 13.06
+->validacja -done 13.06
+
+
+http://www.symfony2cheatsheet.com/#testing
