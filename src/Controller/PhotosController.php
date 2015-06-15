@@ -71,8 +71,17 @@ class PhotosController implements ControllerProviderInterface
 
                     $newFilename = $photosModel->createName($originalFilename); //tworzy now? nazw?
                     $files['image']->move($path, $newFilename); //prznoszenie z tymczas. do ostatecznego msc
-
-                    $photosModel->saveFile($newFilename, $data); //zapisywanie
+// var_dump($data);
+// var_dump($newFilename);
+                    $adId = $data['ad_id'];
+                    $photo = $photosModel->getPhoto($adId);
+                    
+                    if($photo == null) {
+                        $photosModel->saveFile($newFilename, $data); //zapisywanie
+                    } else {
+                        $photosModel->updateFile($newFilename, $data);
+                    }
+                    
                     
                     //$adsModel = new AdsModel($app);
                     //$adsModel->adPhoto($adId);
@@ -83,6 +92,12 @@ class PhotosController implements ControllerProviderInterface
                             'type' => 'success',
                             'content' => 'File successfully uploaded.'
                         )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate(
+                            '/ads/view',
+                            array('id' => $data['ad_id'])),
+                        301
                     );
                     $flag= true;
 

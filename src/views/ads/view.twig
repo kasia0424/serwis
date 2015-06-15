@@ -44,12 +44,10 @@
             <tbody>
                 <tr>
                     <td>
-                        {% if ad.photo_id == null %}
+                        {% if photo == null %}
                             <a href="{{ url('/photos/upload', {'id': ad.id}) }}" title="Add photo" class="btn btn-default btn-lg active" role="button">Add photo</a>
                         {% else %}
-                            {% for photo in photo %}
-                                    <img src="{{ app.request.basepath }}/media/{{ photo }}"  height="200" width="200" alt="obrazek ogłoszenia" class="img-rounded">
-                            {% endfor %}
+                            <img src="{{ app.request.basepath }}/media/{{ photo }}"  height="200" width="200" alt="obrazek ogłoszenia" class="img-rounded">
                         {% endif %}
                     </td>
                     <td>{{ ad.title|e }}</td>
@@ -76,7 +74,7 @@
     {% endif %}
     <h4>
         {% if is_granted('ROLE_USER') and loggedUser == ad.user_id %}
-            {% if ad.photo_id != null %}
+            {% if photo != null %}
                 <a href="{{ url('/photos/', {'id': ad.id}) }}" title="photo upload"  class="label label-primary text-uppercase">Change photo</a> <br/><br/>
             {% endif %}
         {% endif %}

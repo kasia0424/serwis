@@ -165,7 +165,7 @@ class AdsController implements ControllerProviderInterface
                             array(
                                 'pattern' => "/[a-zA-z]{3,}/",
                                 //'match' =>   true,
-                                'message' => 'It\'s your ad - use at least 3 letters in it.',
+                                'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
                             )
                         )
                     )
@@ -491,13 +491,12 @@ class AdsController implements ControllerProviderInterface
                     'errors/404.twig'
                 );
             }
-            
-            $photoId = $ad['photo_id'];
 
-            if ($photoId != null) {
                 $photosModel = new PhotosModel($app);
-                $photo= $photosModel->getFile($photoId);
-            }
+                $photoTab= $photosModel->getPhoto($ad['id']);
+                $photo = $photoTab['name'];
+                // var_dump($photo);
+            //}
         } catch (\Exception $e) {
             $errors[] = 'Something went wrong';
             $app->abort(404, $app['translator']->trans('Ad not found'));
