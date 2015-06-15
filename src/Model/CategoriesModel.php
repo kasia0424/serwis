@@ -226,7 +226,6 @@ class CategoriesModel
     {
         $query = 'SELECT so_ads.id, title, text, postDate, category_id FROM so_ads INNER JOIN so_categories
             ON so_categories.id = so_ads.category_id where so_categories.id = :id LIMIT :start, :limit';
-            //return $this->db->fetchAll($query, array((int) $id));
         $statement = $this->db->prepare($query);
         $statement->bindValue('start', ($page-1)*$limit, \PDO::PARAM_INT);
         $statement->bindValue('limit', $limit, \PDO::PARAM_INT);

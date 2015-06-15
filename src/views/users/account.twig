@@ -8,8 +8,7 @@
         <a href="{{ url('/user/view', {'id': info.id}) }}" title="View user" class="btn btn-primary btn-lg active" role="button" style="display:block;">View my data</a>
         <a href="{{ url('/user/edit', {'id': info.id}) }}" title="Edit password" class="btn btn-primary btn-lg active" role="button" style="display:block;">Edit password</a>
         <a href="{{ url('/user/number') }}" title="Edit phone number" class="btn btn-primary btn-lg active" role="button" style="display:block;">Edit phone number</a>
-        {#<a href="{{ url('/user/password') }}" title="Change passord" class="btn btn-primary btn-lg active" role="button" style="display:block;">Change your password</a>
-        #}<a href="{{ url('/user/delete', {'id': info.id}) }}" title="Delete user" onclick="return confirm('Sure you want to delete your account?')" class="btn btn-primary btn-lg active" role="button" style="display:block;">Delete account</a>
+        <a href="{{ url('/user/delete', {'id': info.id}) }}" title="Delete user" onclick="return confirm('Sure you want to delete your account?')" class="btn btn-primary btn-lg active" role="button" style="display:block;">Delete account</a>
     </div>
 
     <h1 class="text-center" style="display:block;">

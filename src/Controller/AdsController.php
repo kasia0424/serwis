@@ -2,8 +2,8 @@
 /**
  * Ads controller.
  *
- * @link http://epi.uj.edu.pl
- * @author epi(at)uj(dot)edu(dot)pl
+ * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/ads/
+ * @author Wanda Sipel
  * @copyright EPI 2015
  */
 
@@ -120,7 +120,7 @@ class AdsController implements ControllerProviderInterface
         $usersModel = new UsersModel($app);
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
         $number = $usersModel->getPhone($idLoggedUser);
-        if ($number == null){
+        if ($number == null) {
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
@@ -186,7 +186,6 @@ class AdsController implements ControllerProviderInterface
                         new Assert\Regex(
                             array(
                                 'pattern' => "/[a-zA-z]{3,}/",
-                                //'match' =>   true,
                                 'message' => 'It\'s your ad - use at least 3 letters in it.',
                             )
                         )
@@ -207,13 +206,7 @@ class AdsController implements ControllerProviderInterface
         if ($form->isValid()) {
             $adsModel = new AdsModel($app);
             $data = $form->getData();
-
             $catId=$data['category_id'];
-            // $categoriesModel = new CategoriesModel($app);
-            // $catList = $categoriesModel->getAll();
-            // $cat=$catList[$catId];
-            // $category=$cat['id'];
-            // $data['category_id']=$category;
 
             $adsModel->saveAd($data);
 
@@ -268,8 +261,6 @@ class AdsController implements ControllerProviderInterface
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
         if (!$app['security']->isGranted('ROLE_ADMIN')) {
             if ((int)$ad['user_id'] !== (int)$idLoggedUser) {
-                // echo 'This is not your ad - you can not edit it.';
-                // redirect($app['url_generator']->generate('/ads/'), 301);
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
@@ -334,7 +325,6 @@ class AdsController implements ControllerProviderInterface
                         )
                     )
                 )
-                // ->add('save', 'submit')
                 ->getForm();
 
             $form->handleRequest($request);
@@ -342,15 +332,7 @@ class AdsController implements ControllerProviderInterface
             if ($form->isValid()) {
                 $adsModel = new AdsModel($app);
                 $data = $form->getData();
-
                 $catId=$data['category_id'];
-                // $categoriesModel = new CategoriesModel($app);
-                // $catList = $categoriesModel->getAll();
-                // $cat=$catList[$catId];
-                // $category=$cat['id'];
-                // $data['category_id']=$category;
-
-
 
                 $adsModel->updateAd($data);
 
@@ -362,15 +344,10 @@ class AdsController implements ControllerProviderInterface
 
                     )
                 );
-                // return $app->redirect(
-                    // $app['url_generator']->generate('/users/account'),
-                    // 301
-                // );
                 return $app->redirect(
                     $app['url_generator']->generate('/ads/'),
                     301
                 );
-
             }
         } catch (\Exception $e) {
             $errors[] = 'Something went wrong';
@@ -406,9 +383,7 @@ class AdsController implements ControllerProviderInterface
     {
         // $form = $app['form.factory']
             // ->createBuilder(new AdForm(), $ad)->getForm();
-        // $form->remove('title');
-        // $form->remove('text');
-        // // $view = array();
+        // $view = array();
         // return $app['twig']->render('ads/delete.twig', $view);
         $usersModel = new UsersModel($app);
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
@@ -442,10 +417,6 @@ class AdsController implements ControllerProviderInterface
                 )
             );
         } catch (\Exception $e) {
-            // $errors[] = 'Something went wrong';
-            // return $app['twig']->render(
-                // 'errors/500.twig'
-            // );
             $app->abort(
                 404,
                 $app['translator']->trans('Ad not found')
@@ -477,8 +448,7 @@ class AdsController implements ControllerProviderInterface
         try {
             $ad = $adsModel->getAd($id);
             $number = $usersModel-> getPhone($ad['user_id']);
-            // var_dump($ad['user_id']);
-        // var_dump($idLoggedUser);
+
             if (!$ad) {
                 $app['session']->getFlashBag()->add(
                     'message',
@@ -495,8 +465,7 @@ class AdsController implements ControllerProviderInterface
                 $photosModel = new PhotosModel($app);
                 $photoTab= $photosModel->getPhoto($ad['id']);
                 $photo = $photoTab['name'];
-                // var_dump($photo);
-            //}
+
         } catch (\Exception $e) {
             $errors[] = 'Something went wrong';
             $app->abort(404, $app['translator']->trans('Ad not found'));

@@ -2,8 +2,8 @@
 /**
  * Categories controller.
  *
- * @link http://epi.uj.edu.pl
- * @author epi(at)uj(dot)edu(dot)pl
+ * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/categories/
+ * @author Wanda Sipel
  * @copyright EPI 2015
  */
 
@@ -53,28 +53,6 @@ class CategoriesController implements ControllerProviderInterface
      */
     public function indexAction(Application $app, Request $request)
     {
-        // $view = array();
-        // $categoriesModel = new CategoriesModel($app);
-
-        // try {
-            // $view['categories'] = $categoriesModel->getAll();
-        // } catch (\Exception $e) {
-            // $errors[] = 'Something went wrong';
-
-            // $app['session']->getFlashBag()->add(
-                // 'message',
-                // array(
-                    // 'type' => 'danger',
-                    // 'content' => 'Ads not found'
-                // )
-            // );
-            // return $app['twig']->render(
-                // 'errors/404.twig'
-            // );
-        // }
-
-        // return $app['twig']
-            // ->render('categories/index.twig', $view);
         $usersModel = new UsersModel($app);
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
         
@@ -191,14 +169,6 @@ class CategoriesController implements ControllerProviderInterface
         $categoriesModel = new CategoriesModel($app);
         $id = (int) $request->get('id', 0);
         $category = $categoriesModel->getCategory($id);
-        
-        // if (!$category) {
-            // echo '<span style="background-color: red; color: white; padding: 0.5em;">Category does not exist</span>';
-            // return $app->redirect(
-                // $app['url_generator']->generate('/categories/'),
-                // 301
-            // );
-        // }
 
         $data = array(
             'id'=> $id,
@@ -357,7 +327,6 @@ class CategoriesController implements ControllerProviderInterface
 
         try {
             $category = $categoriesModel->getCategory($id);
-            //$ads = $categoriesModel->getCategoryAds($id);
             $pageLimit = 3;
             $page = (int) $request->get('page', 1);
 

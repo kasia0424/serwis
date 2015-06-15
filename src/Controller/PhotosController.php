@@ -1,4 +1,11 @@
 <?php
+/**
+ * Photos controller.
+ *
+ * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/photos/
+ * @author Wanda Sipel
+ * @copyright EPI 2015
+ */
 
 namespace Controller;
 
@@ -13,6 +20,13 @@ use Form\FilesForm;
 
 class PhotosController implements ControllerProviderInterface
 {
+    /**
+     * Routing settings.
+     *
+     * @access public
+     * @param Application $app Silex application
+     * @return PhotosController Result
+     */
     public function connect(Application $app)
     {
         $photosController = $app['controllers_factory'];
@@ -23,6 +37,14 @@ class PhotosController implements ControllerProviderInterface
         return $photosController;
     }
 
+    /**
+     * Upload action.
+     *
+     * @access public
+     * @param Application $app Silex application
+     * @param Request $request Request object
+     * @return string Output
+     */
     public function upload(Application $app, Request $request)
     {
         $adId =(int)$request->get('id', 0);
@@ -62,29 +84,24 @@ class PhotosController implements ControllerProviderInterface
             if ($form->isValid()) {
                 try {
                     $data = $form->getData();
-                    $files = $request->files->get($form->getName()); //sprawdzanie poprawno?ci danych!
+                    $files = $request->files->get($form->getName());
                     $path = dirname(dirname(dirname(__FILE__))).'/web/media';
 
                     $photosModel = new PhotosModel($app);
 
                     $originalFilename = $files['image']->getClientOriginalName();
 
-                    $newFilename = $photosModel->createName($originalFilename); //tworzy now? nazw?
-                    $files['image']->move($path, $newFilename); //prznoszenie z tymczas. do ostatecznego msc
-// var_dump($data);
-// var_dump($newFilename);
+                    $newFilename = $photosModel->createName($originalFilename);
+                    $files['image']->move($path, $newFilename);
+
                     $adId = $data['ad_id'];
                     $photo = $photosModel->getPhoto($adId);
                     
-                    if($photo == null) {
-                        $photosModel->saveFile($newFilename, $data); //zapisywanie
+                    if ($photo == null) {
+                        $photosModel->saveFile($newFilename, $data);
                     } else {
                         $photosModel->updateFile($newFilename, $data);
                     }
-                    
-                    
-                    //$adsModel = new AdsModel($app);
-                    //$adsModel->adPhoto($adId);
 
                     $app['session']->getFlashBag()->add(
                         'message',
@@ -96,12 +113,13 @@ class PhotosController implements ControllerProviderInterface
                     return $app->redirect(
                         $app['url_generator']->generate(
                             '/ads/view',
-                            array('id' => $data['ad_id'])),
+                            array('id' => $data['ad_id'])
+                        ),
                         301
                     );
                     $flag= true;
 
-                 } catch (Exception $e) {
+                } catch (Exception $e) {
                      $app['session']->getFlashBag()->add(
                          'message',
                          array(
@@ -109,7 +127,7 @@ class PhotosController implements ControllerProviderInterface
                              'content' => 'Can not upload file.'
                          )
                      );
-                 }
+                }
 
             } else {
                 var_dump($form);
@@ -128,6 +146,4 @@ class PhotosController implements ControllerProviderInterface
             array('form' => $form->createView())
         );
     }
-
-
 }

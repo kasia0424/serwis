@@ -2,8 +2,8 @@
 /**
  * Users controller.
  *
- * @link http://epi.uj.edu.pl
- * @author epi(at)uj(dot)edu(dot)pl
+ * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/user/
+ * @author Wanda Sipel
  * @copyright EPI 2015
  */
 namespace Controller;
@@ -39,9 +39,11 @@ class UsersController implements ControllerProviderInterface
     }
 
     /**
-     * Connect
-     * @param Application $app
-     * @return \Silex\ControllerCollection
+     * Routing settings.
+     *
+     * @access public
+     * @param Application $app Silex application
+     * @return PhotosController Result
      */
     public function connect(Application $app)
     {
@@ -78,18 +80,16 @@ class UsersController implements ControllerProviderInterface
     public function indexAction(Application $app, Request $request)
     {
         $usersModel = new UsersModel($app);
-        // $users = $usersModel->getUserList();
         $adsTab = $usersModel->countUserAds();
-        //
+
         $pageLimit = 4;
         $page = (int) $request->get('page', 1);
-        //$usersModel = new UsersModel($app);
+
         try {
             $pagesCount = $usersModel->countUsersPages($pageLimit);
             $page = $usersModel->getCurrentPageNumber($page, $pagesCount);
             $users = $usersModel->getUsersPage($page, $pageLimit);
             $paginator = array('page' => $page, 'pagesCount' => $pagesCount);
-            // $this->view['users'] = $users;
         } catch (\Exception $e) {
             $errors[] = 'Something went wrong';
 
@@ -506,15 +506,13 @@ class UsersController implements ControllerProviderInterface
 
             if ($form->isValid()) {
                 $data = $form->getData();
-                // var_dump($data);
-                //var_dump($phone);
 
                 $data['id'] = $app
                     ->escape($data['id']);
                 $data['phone_number'] = $app
                     ->escape($data['phone_number']);
 
-                //try {
+                try {
                     if ($phone != null) {
                         $this->model->updatePhone($data);
                     } else {
@@ -534,20 +532,20 @@ class UsersController implements ControllerProviderInterface
                         ),
                         301
                     );
-                // } catch (\Exception $e) {
-                    // $errors[] = 'Something went wrong';
+                } catch (\Exception $e) {
+                    $errors[] = 'Something went wrong';
                     
-                    // $app['session']->getFlashBag()->add(
-                        // 'message',
-                        // array(
-                            // 'type' => 'danger',
-                            // 'content' => 'Something went wrong. '
-                        // )
-                    // );
-                    // return $app['twig']->render(
-                        // 'errors/500.twig'
-                    // );
-                // }
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger',
+                            'content' => 'Something went wrong. '
+                        )
+                    );
+                    return $app['twig']->render(
+                        'errors/500.twig'
+                    );
+                }
             }
 
                 return $app['twig']->render(
@@ -730,7 +728,6 @@ class UsersController implements ControllerProviderInterface
             ->getForm();
 
         $form->handleRequest($request);
-        //var_dump($id);
 
         if ($form->isValid()) {
             if ($form->get('No')->isClicked()) {
@@ -746,11 +743,8 @@ class UsersController implements ControllerProviderInterface
                 try {
                     $adsModel = new AdsModel($app);
                     $adsModel->deleteUsersAds($id);
-                    //$usersModel = new UsersModel($app);
                     $usersModel->deletePhone($id);
                     $usersModel->deleteUser($id);
-                    
-                    
 
                     $app['session']->clear();
 
@@ -791,7 +785,8 @@ class UsersController implements ControllerProviderInterface
 
     }
 
-    /** View user profile
+    /**
+     * View user profile
      *
      * @param Application $app application object
      * @param Request $request request
@@ -824,7 +819,8 @@ class UsersController implements ControllerProviderInterface
         );
     }
 
-    /** Changing user's password
+    /**
+     * Changing user's password
      *
      * @access public
      * @param Application $app application object
@@ -930,10 +926,6 @@ class UsersController implements ControllerProviderInterface
                         )
                     )
                 )
-				// ->add(
-					// 'save',
-					// 'submit'
-				// )
                 ->getForm();
 
             $form->handleRequest($request);
@@ -1033,59 +1025,53 @@ class UsersController implements ControllerProviderInterface
         $usersModel = new UsersModel($app);
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
 
-        // if ($app['security']->isGranted('ROLE_ADMIN')) {
-            // return $app['twig']->render('users/admin.twig');
-        // } else {
-            //$usersModel = new UsersModel($app);
+        try {
+            $info = $usersModel->getUser($idLoggedUser);
+
+            $usersModel = new UsersModel($app);
+            $pageLimit = 4;
+            $page = (int) $request->get('page', 1);
+
             try {
-                $info = $usersModel->getUser($idLoggedUser);
-
-                $usersModel = new UsersModel($app);
-                //$ads = $usersModel->getUserAds($idLoggedUser);
-                $pageLimit = 4;
-                $page = (int) $request->get('page', 1);
-
-                try {
-                    $pagesCount = $usersModel->countUsersAdsPages($pageLimit, $idLoggedUser);
-                    $page = $usersModel->getCurrentPageNumber($page, $pagesCount);
-                    $ads = $usersModel->getUsersAdsPage($page, $pageLimit, $idLoggedUser);
-                    $paginator = array('page' => $page, 'pagesCount' => $pagesCount);
-                    $this->view['ads'] = $ads;
-                } catch (\Exception $e) {
-                    $errors[] = 'Something went wrong';
-
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'danger',
-                            'content' => 'Ads not found'
-                        )
-                    );
-                    return $app['twig']->render(
-                        'errors/404.twig'
-                    );
-                }
+                $pagesCount = $usersModel->countUsersAdsPages($pageLimit, $idLoggedUser);
+                $page = $usersModel->getCurrentPageNumber($page, $pagesCount);
+                $ads = $usersModel->getUsersAdsPage($page, $pageLimit, $idLoggedUser);
+                $paginator = array('page' => $page, 'pagesCount' => $pagesCount);
+                $this->view['ads'] = $ads;
             } catch (\Exception $e) {
+                $errors[] = 'Something went wrong';
+
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'Ads not fond'
+                        'content' => 'Ads not found'
                     )
                 );
                 return $app['twig']->render(
                     'errors/404.twig'
                 );
             }
-            return $app['twig']->render(
-                'users/account.twig',
+        } catch (\Exception $e) {
+            $app['session']->getFlashBag()->add(
+                'message',
                 array(
-                    'ads' => $ads,
-                    'info' => $info,
-                    'paginator' => $paginator
+                    'type' => 'danger',
+                    'content' => 'Ads not fond'
                 )
             );
-        //}
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
+        return $app['twig']->render(
+            'users/account.twig',
+            array(
+                'ads' => $ads,
+                'info' => $info,
+                'paginator' => $paginator
+            )
+        );
 
     }
 }

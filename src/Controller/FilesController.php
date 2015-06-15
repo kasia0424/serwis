@@ -1,4 +1,11 @@
 <?php
+/**
+ * Files controller.
+ *
+ * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/photos/
+ * @author Wanda Sipel
+ * @copyright EPI 2015
+ */
 
 namespace Controller;
 
@@ -10,6 +17,13 @@ use Model\FilesModel;
 
 class FilesController implements ControllerProviderInterface
 {
+    /**
+     * Routing settings.
+     *
+     * @access public
+     * @param Application $app Silex application
+     * @return PhotosController Result
+     */
     public function connect(Application $app)
     {
         $filesController = $app['controllers_factory'];
@@ -20,6 +34,14 @@ class FilesController implements ControllerProviderInterface
         return $filesController;
     }
 
+    /**
+     * Upload action.
+     *
+     * @access public
+     * @param Application $app Silex application
+     * @param Request $request Request object
+     * @return string Output
+     */
     public function upload(Application $app, Request $request)
     {
         $form = $app['form.factory']->createBuilder('form')

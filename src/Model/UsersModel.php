@@ -2,8 +2,8 @@
 /**
  * Users model.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
+ * @author Wanda Sipel <katarzyna.sipel@uj.edu.pl>
+ * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/users/
  * @copyright 2015 EPI
  */
 
@@ -251,7 +251,6 @@ class UsersModel
     public function addDetails($data)
     {
         $query = "INSERT INTO `so_details` (`user_id`, `phone_number`) VALUES (?, ?)";
-        //var_dump($data['phone_number']);die();
         $this->db->executeQuery(
             $query,
             array(
@@ -372,21 +371,6 @@ class UsersModel
         $sql = 'SELECT * FROM so_users WHERE id = ? Limit 1';
         return $this->db->fetchAssoc($sql, array((int)$id));
     }
-    
-    // /**
-     // * Connected user with his role.
-     // *
-     // * @param  Integer $iduser
-     // *
-     // * @access public
-     // * @return Void
-     // */
-    // public function addRole($iduser)
-    // {
-        // $sql = 'INSERT INTO `so_users` (`role_id`) VALUES (?);';
-
-        // $this->db->executeQuery($sql, array('2'));
-    // }
 
     /**
      * Change user's role
@@ -440,31 +424,15 @@ class UsersModel
         return $user;
     }
 
+
     /**
-     * Check if user is logged
+     * Get user information by ad id
      *
-     * @param Application $app
+     * @param integer $id Record Id
      *
      * @access public
-     * @return bool
+     * @return array Result
      */
-    // public function isLoggedIn(Application $app)
-    // {
-        // if ('anon.' !== $user = $app['security']->getToken()->getUser()) {
-            // return true;
-        // } else {
-            // return false;
-        // }
-    // }
-
-    // public function getUserAds($id)
-    // {
-        // $sql = 'SELECT so_ads.id, title, text, postDate, category_id, so_categories.name as category, user_id
-            // FROM so_ads JOIN so_categories ON so_ads.category_id = so_categories.id WHERE user_id = ?';
-        // return $this->db->
-            // fetchAll($sql, array($idUser));
-    // }
-
     public function getUserByAd($id)
     {
         $sql = 'SELECT login
@@ -489,7 +457,7 @@ class UsersModel
     }
 
     /**
-     * Get all categories on page.
+     * Get all ads on page.
      *
      * @access public
      * @param integer $page Page number
@@ -501,7 +469,6 @@ class UsersModel
         $query = 'SELECT so_ads.id, title, text, postDate, category_id, so_categories.name as category, photo_id
             FROM so_ads INNER JOIN so_categories
             ON so_categories.id = so_ads.category_id where user_id = :id LIMIT :start, :limit';
-            //return $this->db->fetchAll($query, array((int) $id));
         $statement = $this->db->prepare($query);
         $statement->bindValue('start', ($page-1)*$limit, \PDO::PARAM_INT);
         $statement->bindValue('limit', $limit, \PDO::PARAM_INT);
@@ -512,7 +479,7 @@ class UsersModel
     }
     
     /**
-     * Counts category pages.
+     * Counts ads pages.
      *
      * @access public
      * @param integer $limit Number of records on single page

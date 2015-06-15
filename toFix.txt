@@ -1,7 +1,7 @@
 //-szalone adresy - zakomentowaæ debuga
 
--zdjêcia - do ads'ów
--upload - móc do swojego
+//-zdjêcia - do ads'ów
+//-upload - móc do swojego
 
 //-user - change password == edit user ?
 //-dodawanie userów - w menu + dla anonimów
@@ -36,7 +36,7 @@ KONIEC: odkomentowaæ 500 w index.php!
 +sprawdziæ dzia³anie
 +zakomentowaæ debuga
 
-->CodeSniffer -done 13.06
+->CodeSniffer -done 15.06
 ->validacja -done 13.06
 
 

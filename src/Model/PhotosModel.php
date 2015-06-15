@@ -3,7 +3,7 @@
  * Photos model.
  *
  * @author Wanda Sipel <katarzyna.sipel@uj.edu.pl>
- * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/files/
+ * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/photos/
  * @copyright 2015 EPI
  */
 
@@ -51,18 +51,8 @@ class PhotosModel
      */
     public function saveFile($name, $data)
     {
-    // var_dump($data);
-    // var_dump($name);die();
         $sql = 'INSERT INTO `so_photos` (`name`, ad_id) VALUES (?, ?)';
         $this->_db->executeQuery($sql, array($name, $data['ad_id']));
-        
-        // $query = 'SELECT id FROM so_photos
-            // WHERE name=?';
-        // $result = $this->_db->executeQuery($sql, array($name));
-        // //var_dump($result);die();
-
-        // $sql = 'UPDATE so_ads SET photo_id= ? WHERE id = ?';
-        // $this->_db->executeQuery($sql, array((int) $result,(int) $id));
     }
 
 
@@ -75,29 +65,8 @@ class PhotosModel
      */
     public function updateFile($name, $data)
     {
-    // var_dump($data);
-    // var_dump($name);die();
         $sql = 'UPDATE `so_photos` SET `name`=? WHERE `ad_id` = ?';
         $this->_db->executeQuery($sql, array($name, $data['ad_id']));
-    }
-    
-    
-    /**
-     * Ads photo to ad
-     *
-     * @access public
-     * @param array $name File namea
-     * @retun mixed Result
-     */
-    public function adPhoto($id)
-    {
-        $query = 'SELECT id FROM so_photos
-            order by id limit 1';
-        $result = $this->_db->executeQuery($sql, array($name));
-        //var_dump($result);die();
-
-        // $sql = 'UPDATE so_photos SET ad_id= ? WHERE id = ?';
-        // $this->_db->executeQuery($sql, array((int) $id, (int) $result));
     }
 
 

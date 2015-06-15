@@ -2,8 +2,8 @@
 /**
  * Category form.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
+ * @author Wanda Sipel
+ * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/categories/
  * @copyright 2015 EPI
  */
 

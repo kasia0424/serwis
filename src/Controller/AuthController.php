@@ -2,8 +2,8 @@
 /**
  * Auth controller.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
+ * @author Wanda Siepl
+ * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/auth/login
  * @copyright 2015 EPI
  */
 
@@ -83,14 +83,6 @@ class AuthController implements ControllerProviderInterface
     public function logoutAction(Application $app, Request $request)
     {
         $app['session']->clear();
-        // $app['session']->getFlashBag()->add(
-            // 'message',
-            // array(
-                // 'type' => 'success',
-                // 'content' => 'You\'ve logged out.'
-            // )
-        // );
-        
         return $app['twig']->render('auth/logout.twig', $this->view);
     }
 }

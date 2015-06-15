@@ -87,8 +87,6 @@ $app->get(
          array('^/categories/$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/auth/.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/user/add.$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
-         // array('^/ads/search.$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
-        // array('^/ads/results.$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/ads/view.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/categories/view.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/ads/delete/.*$', 'ROLE_USER'),
@@ -107,42 +105,6 @@ $app->get(
          'ROLE_USER' => array('ROLE_ANONYMUS'),
      ),
  ));
-
-// $app->register(
-    // new Silex\Provider\SecurityServiceProvider(),
-    // array(
-        // 'security.firewalls' => array(
-            // 'admin' => array(
-                // 'pattern' => '^.*$',
-                // 'form' => array(
-                    // 'login_path' => '/auth/login',
-                    // 'check_path' => '/auth/login_check',
-                    // 'default_target_path'=> '/ads/',
-                    // 'username_parameter' => 'loginForm[login]',
-                    // 'password_parameter' => 'loginForm[password]',
-                // ),
-                // 'anonymous' => true,
-                // 'logout' => array(
-                    // 'logout_path' => '/auth/logout',
-                    // 'target_url' => '/ads/'
-                // ),
-                // 'users' => $app->share(
-                    // function() use ($app)
-                    // {
-                        // return new Provider\UserProvider($app);
-                    // }
-                // ),
-            // ),
-        // ),
-        // 'security.access_rules' => array(
-            // array('^/auth.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
-            // array('^/.+$', 'ROLE_ADMIN')
-        // ),
-        // 'security.role_hierarchy' => array(
-            // 'ROLE_ADMIN' => array('ROLE_USER'),
-        // ),
-    // )
-// );
 
 
 //obsługa błędów
@@ -172,15 +134,15 @@ $app->error(
         }
     }
 );
-// $app->error(
-    // function (\Exception $e, $code) use ($app) {
-        // if ($code == 500) {
-            // return new Response(
-                // $app['twig']->render('errors/500.twig'), 500
-            // );
-        // }
-    // } 
-// );
+$app->error(
+    function (\Exception $e, $code) use ($app) {
+        if ($code == 500) {
+            return new Response(
+                $app['twig']->render('errors/500.twig'), 500
+            );
+        }
+    } 
+);
 $app->error(
     function (
         \Exception $e, $code
@@ -192,22 +154,22 @@ $app->error(
                 // 'errors/404.twig'
             // );
         }
-        // if ($e instanceof Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException) {
-            // $code = (string)$e->getStatusCode();
-            // return $app['twig']->render(
-                // 'errors/404.twig'
-            // );
-        // }
+        if ($e instanceof Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException) {
+            $code = (string)$e->getStatusCode();
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
         
-        // if ($e instanceof Symfony\Component\HttpKernel\Exception\FatalErrorException) {
-            // // return $app->redirect(
-                // // $app['url_generator']->generate('/ads/'),
-                // // 301
-            // // );
-            // return $app['twig']->render(
-                // 'errors/default.twig'
+        if ($e instanceof Symfony\Component\HttpKernel\Exception\FatalErrorException) {
+            // return $app->redirect(
+                // $app['url_generator']->generate('/ads/'),
+                // 301
             // );
-        // }
+            return $app['twig']->render(
+                'errors/default.twig'
+            );
+        }
 
         if ($app['debug']) {
             return;
