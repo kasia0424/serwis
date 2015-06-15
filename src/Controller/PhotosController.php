@@ -25,18 +25,17 @@ class PhotosController implements ControllerProviderInterface
 
     public function upload(Application $app, Request $request)
     {
-        $adId =$request->get('id', 0);
-        $app['session']->set('ad', array('ad_id' => $adId));
-        
+        $adId =(int)$request->get('id', 0);
+        //$app['session']->set('ad', array('ad_id' => $adId));
+
         $adsModel = new AdsModel($app);
         $ad = $adsModel->getAd($adId);
-        var_dump($adId);
-        
+
         $usersModel = new UsersModel($app);
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
-        
+
         $flag = false;
-        
+
         if ($flag == false) {
         // if (!$app['security']->isGranted('ROLE_ADMIN')) {
             // if ((int)$ad['user_id'] !== (int)$idLoggedUser) {
@@ -54,63 +53,25 @@ class PhotosController implements ControllerProviderInterface
         // }
         }
 
-        $data = array(
-            'ad_id' => $adId,
-            // 'user_id' =>
-        );
         $form = $app['form.factory']
-            ->createBuilder(new FilesForm(), $data)->getForm();
-         $form->remove('id_file');
-        // $form = $app['form.factory']->createBuilder('form', $data)
-            // ->add(
-                // 'file',
-                // 'file',
-                // array(
-                    // 'label' => 'Choose file',
-                    // 'constraints' => array(new Assert\Image())
-                // )
-            // )
-            // ->add(
-                // 'flag',
-                // 'hidden', array(
-                    // 'data' => $adId
-                // )
-            // )
-            // ->add(
-                // 'save',
-                // 'submit',
-                // array('label' => 'Upload file')
-            // )
-            // ->getForm();
-        //$form['ad_id']=$adId;
-        //var_dump($form);
+            ->createBuilder(new FilesForm(), array('ad_id'=>$adId))->getForm();
 
-        if ($request->isMethod('POST')) {
-            $form->bind($request);
+        if ($request->isMethod('post')) {
+            $form->handleRequest($request);
 
             if ($form->isValid()) {
-                //try {
-                    //$flag= true;
+                try {
                     $data = $form->getData();
-                    //var_dump($form);
-                    $ad = $app['session']->get('ad');
-                    //$adId = $form.a_id;
-                    $post = $request->request->get('a_id');
-                    //$post = $request->request->getForm();
-                    
-                    //var_dump($post['a_id']);
-                    //var_dump($request);die();
-                    
-                    $files = $request->files->get($form->getName()); //sprawdzanie poprawnoœci danych!
+                    $files = $request->files->get($form->getName()); //sprawdzanie poprawno?ci danych!
                     $path = dirname(dirname(dirname(__FILE__))).'/web/media';
 
                     $photosModel = new PhotosModel($app);
 
-                    $originalFilename = $files['file']->getClientOriginalName();
+                    $originalFilename = $files['image']->getClientOriginalName();
 
-                    $newFilename = $photosModel->createName($originalFilename); //tworzy now¹ nazwê
-                    $files['file']->move($path, $newFilename); //prznoszenie z tymczas. do ostatecznego msc
-                    
+                    $newFilename = $photosModel->createName($originalFilename); //tworzy now? nazw?
+                    $files['image']->move($path, $newFilename); //prznoszenie z tymczas. do ostatecznego msc
+
                     $photosModel->saveFile($newFilename, $data); //zapisywanie
                     
                     //$adsModel = new AdsModel($app);
@@ -125,17 +86,18 @@ class PhotosController implements ControllerProviderInterface
                     );
                     $flag= true;
 
-                // } catch (Exception $e) {
-                    // $app['session']->getFlashBag()->add(
-                        // 'message',
-                        // array(
-                            // 'type' => 'error',
-                            // 'content' => 'Can not upload file.'
-                        // )
-                    // );
-                // }
+                 } catch (Exception $e) {
+                     $app['session']->getFlashBag()->add(
+                         'message',
+                         array(
+                             'type' => 'error',
+                             'content' => 'Can not upload file.'
+                         )
+                     );
+                 }
 
             } else {
+                var_dump($form);
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
@@ -151,4 +113,6 @@ class PhotosController implements ControllerProviderInterface
             array('form' => $form->createView())
         );
     }
+
+
 }

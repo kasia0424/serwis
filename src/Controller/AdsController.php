@@ -119,6 +119,21 @@ class AdsController implements ControllerProviderInterface
     {
         $usersModel = new UsersModel($app);
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
+        $number = $usersModel->getPhone($idLoggedUser);
+        if ($number == null){
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Add your phone number before.'
+                )
+            );
+            return $app->redirect(
+                $app['url_generator']->generate('/user/number'),
+                301
+            );
+        }
+        
 
         $categoriesModel = new CategoriesModel($app);
         $choiceCategory = $categoriesModel->getCategoriesList();
@@ -145,6 +160,13 @@ class AdsController implements ControllerProviderInterface
                                 'maxMessage' =>'Use less than 30 characters',
 
                             )
+                        ),
+                        new Assert\Regex(
+                            array(
+                                'pattern' => "/[a-zA-z]{3,}/",
+                                //'match' =>   true,
+                                'message' => 'It\'s your ad - use at least 3 letters in it.',
+                            )
                         )
                     )
                 )
@@ -159,6 +181,13 @@ class AdsController implements ControllerProviderInterface
                                 'min' => 5,
                                 'minMessage' =>'Use more than 5 characters',
 
+                            )
+                        ),
+                        new Assert\Regex(
+                            array(
+                                'pattern' => "/[a-zA-z]{3,}/",
+                                //'match' =>   true,
+                                'message' => 'It\'s your ad - use at least 3 letters in it.',
                             )
                         )
                     )
@@ -383,12 +412,12 @@ class AdsController implements ControllerProviderInterface
         // return $app['twig']->render('ads/delete.twig', $view);
         $usersModel = new UsersModel($app);
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
-		var_dump($ad['user_id']);
-		var_dump($idLoggedUser);
+
+        $id = (int) $request -> get('id', 0);
+        $user = (int) $request -> get('user', 0);
+
         if (!$app['security']->isGranted('ROLE_ADMIN')) {
-            if ((int)$ad['user_id'] !== (int)$idLoggedUser) {
-                // echo 'This is not your ad - you can not edit it.';
-                // redirect($app['url_generator']->generate('/ads/'), 301);
+            if ((int)$user !== (int)$idLoggedUser) {
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
@@ -402,7 +431,6 @@ class AdsController implements ControllerProviderInterface
             }
         }
 
-        $id = (int) $request -> get('id', 0);
         $adsModel = new AdsModel($app);
         try {
             $adsModel -> deleteAd($id);
@@ -444,15 +472,13 @@ class AdsController implements ControllerProviderInterface
         
         $usersModel = new UsersModel($app);
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
-        $number = $usersModel-> getPhone($idLoggedUser);
-		
-		
-        
+
         $adsModel = new AdsModel($app);
         try {
             $ad = $adsModel->getAd($id);
+            $number = $usersModel-> getPhone($ad['user_id']);
             // var_dump($ad['user_id']);
-		// var_dump($idLoggedUser);
+        // var_dump($idLoggedUser);
             if (!$ad) {
                 $app['session']->getFlashBag()->add(
                     'message',

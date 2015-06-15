@@ -176,7 +176,6 @@ class AdsModel
      */
     public function deleteUsersAds($id)
     {
-        $id = $id;
         $sql = 'DELETE FROM so_ads WHERE user_id = ?';
         $this->db->executeQuery($sql, array((int) $id));
     }

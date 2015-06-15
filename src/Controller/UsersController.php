@@ -51,8 +51,6 @@ class UsersController implements ControllerProviderInterface
             ->bind('/user/account');
         $usersController->match('/add/', array($this, 'addAction'))
             ->bind('/user/add');
-        // $usersController->match('/edit/', array($this, 'editAction'))
-            // ->bind('/user/edit');
         $usersController->match('/delete/{id}', array($this, 'deleteAction'))
             ->bind('/user/delete');
         $usersController->get('/view/{id}', array($this, 'viewAction'))
@@ -83,7 +81,7 @@ class UsersController implements ControllerProviderInterface
         // $users = $usersModel->getUserList();
         $adsTab = $usersModel->countUserAds();
         //
-        $pageLimit = 2;
+        $pageLimit = 4;
         $page = (int) $request->get('page', 1);
         //$usersModel = new UsersModel($app);
         try {
@@ -213,7 +211,7 @@ class UsersController implements ControllerProviderInterface
                             array(
                                 'type' => 'success',
                                 'content' => 'Account has been
-                                 created'
+                                 created. You can login now.'
                             )
                         );
 
@@ -461,13 +459,14 @@ class UsersController implements ControllerProviderInterface
      */
     public function numberAction(Application $app, Request $request)
     {
-        $id = (int) $request->get('id', 0);
+        //$id = (int) $request->get('id', 0);
+        $id = $this->model->getIdCurrentUser($app);
 
         $usersModel = new UsersModel($app);
         $user = $usersModel->getUser($id);
         $token = $app['security']->getToken();
         
-        $choiceRole = $usersModel->getRolesList();
+        $phone = $usersModel->getPhone($id);
 
         $data = array(
             'id' => $user['id']
@@ -486,13 +485,13 @@ class UsersController implements ControllerProviderInterface
                                     'max' => 12,
                                     'minMessage' =>
                                         'Use exactelty 10 numbers',
-                                    'minMessage' =>
+                                    'maxMessage' =>
                                         'Use exactelty 10 numbers',
                                 )
                             ),
                             new Assert\Regex(
                                 array(
-                                    'pattern' => "/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})([ .-]?)([0-9]{4})/",
+                                    'pattern' => "/^\(?([0-9]{3})\)?([ .-]?)([0-9]{3})([ .-]?)([0-9]{4})$/",
                                     //'match' =>   true,
                                     'message' => 'Use only numbers - format: xxx xxx xxxx',
                                 )
@@ -508,6 +507,7 @@ class UsersController implements ControllerProviderInterface
             if ($form->isValid()) {
                 $data = $form->getData();
                 // var_dump($data);
+                //var_dump($phone);
 
                 $data['id'] = $app
                     ->escape($data['id']);
@@ -515,7 +515,11 @@ class UsersController implements ControllerProviderInterface
                     ->escape($data['phone_number']);
 
                 //try {
-                    $this->model->addDetails($data);
+                    if ($phone != null) {
+                        $this->model->updatePhone($data);
+                    } else {
+                        $this->model->addDetails($data);
+                    };
 
                     $app['session']->getFlashBag()->add(
                         'message',
@@ -547,10 +551,11 @@ class UsersController implements ControllerProviderInterface
             }
 
                 return $app['twig']->render(
-                    'users/role.twig',
+                    'users/number.twig',
                     array(
                         'form' => $form->createView(),
-                        'user' => $user
+                        'user' => $user,
+                        'number' => $phone['phone_number']
                     )
                 );
         } else {
@@ -623,7 +628,7 @@ class UsersController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'success',
-                            'content' => 'Account edited.'
+                            'content' => 'Account edited. This user will have changed role after next log-in'
                         )
                     );
                     return $app->redirect(
@@ -725,6 +730,7 @@ class UsersController implements ControllerProviderInterface
             ->getForm();
 
         $form->handleRequest($request);
+        //var_dump($id);
 
         if ($form->isValid()) {
             if ($form->get('No')->isClicked()) {
@@ -738,11 +744,15 @@ class UsersController implements ControllerProviderInterface
                 );
             } else {
                 try {
-                    $usersModel->deleteUser($id);
                     $adsModel = new AdsModel($app);
                     $adsModel->deleteUsersAds($id);
-                    $usersModel = new UsersModel($app);
+                    //$usersModel = new UsersModel($app);
                     $usersModel->deletePhone($id);
+                    $usersModel->deleteUser($id);
+                    
+                    
+
+                    $app['session']->clear();
 
                     $app['session']->getFlashBag()->add(
                         'message',
@@ -809,6 +819,7 @@ class UsersController implements ControllerProviderInterface
             array(
                 'user' => $user,
                 'number' => $number['phone_number'],
+                'logged' => $idLoggedUser,
             )
         );
     }
@@ -1002,7 +1013,8 @@ class UsersController implements ControllerProviderInterface
         return $app['twig']->render(
             'users/password.twig',
             array(
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'user' => $user
             )
         );
     }
@@ -1017,6 +1029,7 @@ class UsersController implements ControllerProviderInterface
      */
     public function accountAction(Application $app, Request $request)
     {
+        $id = (int) $request->get('id', 0);
         $usersModel = new UsersModel($app);
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
 

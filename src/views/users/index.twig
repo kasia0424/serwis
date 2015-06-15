@@ -35,7 +35,7 @@
                         <a href="{{ url('/user/view', {'id': user.id}) }}" title="User's view" class="btn btn-default btn-lg">See user</a>
                         <a href="{{ url('/user/role', {'id': user.id}) }}" title="Change user's role" class="btn btn-default btn-lg">Change role</a>
                     {% else %}
-                        <a href="{{ url('/user/account', {'id': user.id}) }}" title="User's account" class="btn btn-default btn-lg">See account</a>
+                        <a href="{{ url('/user/account') }}" title="User's account" class="btn btn-default btn-lg">See account</a>
                         <a href="{{ url('/user/edit', {'id': user.id}) }}" title="Edit user" class="btn btn-default btn-lg">Edit</a>
                     {% endif %}
                     

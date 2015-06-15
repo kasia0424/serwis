@@ -13,16 +13,18 @@
 
 //-edit password
 
--numer telefonu - 10liczb +litera
--og³oszenia - same liczby
+//-numer telefonu - 10liczb +litera
+//-current user tel przy adsach
 //-edit adsa - textarea
--delete add -> forbbiden nie twoja
--edit telefonu -> nic nie zmienia
--delete curr_user forbbiden
--pozostale != delete
--admin != edit pass i nr telz view
--all adsy usera dla innych
--current user tel przy adsach
+//-delete add -> forbbiden nie twoja
+//-edit telefonu -> nic nie zmienia
+//-delete curr_user forbbiden
+//-pozostale != delete
+//-admin != edit pass i nr tel z view
+??-all adsy usera dla innych
+//-konieczny numer telefonu przy add ad(redirect po saveAdd, jak phone ==nul) / user view dostêpny po wejœciu w niego??
+//-og³oszenia - same liczby
+
 
 -regu³y firewall !!
 
@@ -39,3 +41,5 @@ KONIEC: odkomentowaæ 500 w index.php!
 
 
 http://www.symfony2cheatsheet.com/#testing
+https://github.com/stolarz92
+https://github.com/pola3s/Projekt-PHP-Silex/

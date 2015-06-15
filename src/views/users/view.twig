@@ -23,12 +23,18 @@
             <td>{{ user.login|e }}</td>
             <td>{{ user.role|e }}</td>
             <td>{{ number }}</td>
-            <td>
-                <a href="{{ url('/user/edit', {'id': user.id}) }}" title="Edit password" class="btn btn-default btn-lg">Edit password</a>
-            </td>
-            <td>
-                <a href="{{ url('/user/number', {'id': user.id}) }}" title="Edit phone number" class="btn btn-default btn-lg">Edit phone number</a>
-            </td>
+            {% if user.id == logged %}
+                <td>
+                    <a href="{{ url('/user/edit') }}" title="Edit password" class="btn btn-default btn-lg">Edit password</a>
+                </td>
+                <td>
+                    {% if number == null %}
+                        <a href="{{ url('/user/number') }}" title="Edit phone number" class="btn btn-default btn-lg">Add phone number</a>
+                    {% else %}
+                        <a href="{{ url('/user/number') }}" title="Edit phone number" class="btn btn-default btn-lg">Edit phone number</a>
+                    {% endif %}
+                </td>
+            {% endif %}
             <td>
                 <a href="{{ url('/user/delete', {'id': user.id}) }}" title="Delete user" onclick="return confirm('Sure you want to delete this user?')" class="btn btn-default btn-lg">Delete </a>
             </td>

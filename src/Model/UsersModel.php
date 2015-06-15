@@ -70,6 +70,24 @@ class UsersModel
         return $result;
     }
     
+    /**
+     * Updates users phonr number
+     *
+     * @access public
+     * @return array Result
+     */
+    public function updatePhone($data)
+    {
+        $query = 'UPDATE so_details SET phone_number = ? WHERE user_id = ?';
+        $this->db->executeQuery(
+            $query,
+            array(
+                $data['phone_number'],
+                $data['id'],
+            )
+        );
+    }
+    
     
     /**
      * Gets all roles

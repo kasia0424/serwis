@@ -91,15 +91,15 @@ $app->get(
         // array('^/ads/results.$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/ads/view.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/categories/view.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+         array('^/ads/delete/.*$', 'ROLE_USER'),
          array('^/ads/.*$', 'ROLE_USER'),
-         array('^/ads/delete.*$', 'ROLE_USER'),
-         array('^/user/*$', 'ROLE_USER'),
          array('^/user/edit.*$', 'ROLE_USER'),
          array('^/user/delete.*$', 'ROLE_USER'),
          array('^/user/view/.*$', 'ROLE_USER'),
          array('^/user/number/.*$', 'ROLE_USER'),
+         array('^/user/*$', 'ROLE_USER'),
+         array('^/photos/.*$', 'ROLE_USER'),
          array('^/photos.*$', 'ROLE_USER'),
-          array('^/photos/.*$', 'ROLE_USER'),
          array('^/.+$', 'ROLE_ADMIN')
      ),
      'security.role_hierarchy' => array(

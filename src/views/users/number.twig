@@ -1,0 +1,26 @@
+{% extends 'base.twig' %}
+
+{% block title %}Edit user's phone number{% endblock %}
+
+{% block content %}
+    <h1 class="text-center">
+        Edit user's phone number
+    </h1>
+    
+    <h3> <strong>User: </strong> {{ user.login }} <br/>
+        {% if number != null %}
+            <strong> Phone number:</strong> {{ number }}
+        {% endif %}
+    </h3>
+    <form action="" method="post">
+        {{ form_widget(form) }}
+    </form>
+
+    <h4>
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ url('/user/panel') }}" title="Users index" class="label label-primary text-uppercase">Back to panel</a>
+        {% else %}
+            <a href="{{ url('/user/account') }}" title="Users account" class="label label-primary text-uppercase">Back to account</a>
+        {% endif %}
+    </h4>
+{% endblock %}
