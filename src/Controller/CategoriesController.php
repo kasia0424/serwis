@@ -346,7 +346,6 @@ class CategoriesController implements ControllerProviderInterface
             );
         }
 
-        //
         $data = array();
         try {
             $form = $app['form.factory']
@@ -381,8 +380,6 @@ class CategoriesController implements ControllerProviderInterface
         
         if ($form->isValid()) {
             if ($form->get('No')->isClicked()) {
-                // $data = $form->getData();
-
                 return $app->redirect(
                     $app['url_generator']->generate(
                         '/categories/'//view',
@@ -391,7 +388,6 @@ class CategoriesController implements ControllerProviderInterface
                     301
                 );
             } else {
-        //
                 try {
                     $ads = $categoriesModel->getCategoryAds($id);
                     foreach ($ads as $ad) {
@@ -419,11 +415,7 @@ class CategoriesController implements ControllerProviderInterface
                     return $app['twig']->render(
                         'errors/404.twig'
                     );
-                }
-            // return $app->redirect(
-                // $app['url_generator']->generate('/categories/'),
-                // 301
-            // );
+                };
             }
         }
         return $app['twig']->render(

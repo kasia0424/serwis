@@ -105,7 +105,7 @@ class UsersController implements ControllerProviderInterface
                 'errors/404.twig'
             );
         }
-        //
+
         return $app['twig']->render(
             'users/index.twig',
             array(
@@ -199,43 +199,12 @@ class UsersController implements ControllerProviderInterface
                             new Assert\Regex(
                                 array(
                                     'pattern' => "/^\(?([0-9]{3})\)?([ .-]?)([0-9]{3})([ .-]?)([0-9]{4})$/",
-                                    //'match' =>   true,
                                     'message' => 'Use only numbers - format: xxx xxx xxxx',
                                 )
                             )
                         )
                     )
                 )
-                // ->add(
-                    // 'password',
-                    // 'password',
-                    // array(
-                        // 'constraints' => array(
-                            // new Assert\NotBlank(), new Assert\Length(
-                                // array(
-                                    // 'min' => 5,
-                                    // 'minMessage' =>
-                                        // 'Use more than 4 characters',
-                                // )
-                            // )
-                        // )
-                    // )
-                // )
-                // ->add(
-                    // 'confirm_password',
-                    // 'password',
-                    // array(
-                        // 'constraints' => array(
-                            // new Assert\NotBlank(), new Assert\Length(
-                                // array(
-                                    // 'min' => 5,
-                                    // 'minMessage' =>
-                                        // 'Use more than 4 characters',
-                                // )
-                            // )
-                        // )
-                    // )
-                // )
                 ->getForm();
 
             $form->handleRequest($request);
@@ -342,22 +311,6 @@ class UsersController implements ControllerProviderInterface
                     )
                 );
             }
-            // } else {
-                // $app['session']->getFlashBag()->add(
-                    // 'message',
-                    // array(
-                        // 'type' => 'warning',
-                        // 'content' => 'Passwords are not correct.'
-                    // )
-                // );
-
-                // return $app['twig']->render(
-                    // 'users/add.twig',
-                    // array(
-                        // 'form' => $form->createView()
-                    // )
-                // );
-            // }
         }
         return $app['twig']->render(
             'users/add.twig',
@@ -533,16 +486,14 @@ class UsersController implements ControllerProviderInterface
                         );
                     }
                 }
-
-                //}
             }
 
-                return $app['twig']->render(
-                    'users/edit.twig',
-                    array(
-                        'form' => $form->createView()
-                    )
-                );
+            return $app['twig']->render(
+                'users/edit.twig',
+                array(
+                    'form' => $form->createView()
+                )
+            );
         } else {
             $app['session']->getFlashBag()->add(
                 'message',
@@ -574,7 +525,6 @@ class UsersController implements ControllerProviderInterface
     public function numberAction(Application $app, Request $request)
     {
         try {
-            //$id = (int) $request->get('id', 0);
             $id = $this->model->getIdCurrentUser($app);
 
             $usersModel = new UsersModel($app);
@@ -624,7 +574,6 @@ class UsersController implements ControllerProviderInterface
                             new Assert\Regex(
                                 array(
                                     'pattern' => "/^\(?([0-9]{3})\)?([ .-]?)([0-9]{3})([ .-]?)([0-9]{4})$/",
-                                    //'match' =>   true,
                                     'message' => 'Use only numbers - format: xxx xxx xxxx',
                                 )
                             )
@@ -930,8 +879,6 @@ class UsersController implements ControllerProviderInterface
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            //$data = $form->getData();
-
             if ($form->get('No')->isClicked()) {
                 return $app->redirect(
                     $app['url_generator']->generate(

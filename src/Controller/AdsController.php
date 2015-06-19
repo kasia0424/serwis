@@ -75,8 +75,7 @@ class AdsController implements ControllerProviderInterface
                 'errors/404.twig'
             );
         }
-        // return $app['twig']
-            // ->render('ads/index.twig', $view);
+
         $pageLimit = 5;
         $page = (int) $request->get('page', 1);
         
@@ -223,15 +222,15 @@ class AdsController implements ControllerProviderInterface
                         'choices' => $choiceCategory
                     )
                 )
-                // ->add(
-                    // 'file',
-                    // 'file',
-                    // array(
-                        // 'label' => 'Choose photo',
-                        // 'required' => false,
-                        // 'constraints' => array(new Assert\Image())
-                    // )
-                // )
+                ->add(
+                    'file',
+                    'file',
+                    array(
+                        'label' => 'Choose photo',
+                        'required' => false,
+                        'constraints' => array(new Assert\Image())
+                    )
+                )
                 // ->add('Upload', 'submit')
                 ->getForm();
             // $form = $app['form.factory']
@@ -277,16 +276,15 @@ class AdsController implements ControllerProviderInterface
                     
                         // $photosModel->saveFile($newFilename, $last['id']);
                     // }
-                // } 
+                // }
                 //
-                
-                $adsModel = new AdsModel($app);
-                $data = $form->getData();
-                //$catId=$data['category_id'];
 
+
+                $data = $form->getData();
+                $adsModel = new AdsModel($app);
                 $adsModel->saveAd($data);
-                
-                
+
+
 
                 $app['session']->getFlashBag()->add(
                     'message',
@@ -520,8 +518,6 @@ class AdsController implements ControllerProviderInterface
     public function deleteAction(Application $app, Request $request)
     {
         try {
-            // $view = array();
-            // return $app['twig']->render('ads/delete.twig', $view);
             $usersModel = new UsersModel($app);
             $idLoggedUser = $usersModel->getIdCurrentUser($app);
 
@@ -592,8 +588,6 @@ class AdsController implements ControllerProviderInterface
         
         if ($form->isValid()) {
             if ($form->get('No')->isClicked()) {
-                //$data = $form->getData();
-
                 return $app->redirect(
                     $app['url_generator']->generate(
                         '/'
