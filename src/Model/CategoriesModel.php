@@ -153,6 +153,7 @@ class CategoriesModel
      *
      * @access public
      * @param integer $id Record Id
+     * @retun mixed Result
      */
     public function deleteCategory($id)
     {

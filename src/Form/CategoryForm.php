@@ -50,13 +50,17 @@ class CategoryForm extends AbstractType
         )
         ->add(
             'name',
-            'textarea',
+            'text',
             array(
+                'attr' => array(
+                     'placeholder' => 'Name',
+                ),
+                // 'label' => false,
                 'constraints' => array(
-                    new Assert\NotBlank(),new Assert\Length(
+                    new Assert\NotBlank(), new Assert\Length(
                         array(
-                            'min' => 5,
-                            'minMessage' =>'Use more than 5 characters',
+                            'min' => 3,
+                            'minMessage' =>'Use more than 2 characters',
                         )
                     )
                 )
@@ -64,11 +68,19 @@ class CategoryForm extends AbstractType
         )
         ->add(
             'description',
-            'text',
+            'textarea',
             array(
+                'attr' => array(
+                     'placeholder' => 'Description',
+                ),
+                // 'label' => false,
                 'constraints' => array(
-                    new Assert\NotBlank(),
-                    new Assert\Length(array('min' => 5))
+                    new Assert\NotBlank(), new Assert\Length(
+                        array(
+                            'min' => 3,
+                            'minMessage' =>'Use more than 2 characters',
+                        )
+                    )
                 )
             )
         );

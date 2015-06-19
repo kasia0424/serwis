@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Validator\Constraints as Assert;
 use Model\UsersModel;
 use Model\AdsModel;
+use Form\DeleteForm;
 
 class UsersController implements ControllerProviderInterface
 {
@@ -79,13 +80,13 @@ class UsersController implements ControllerProviderInterface
      */
     public function indexAction(Application $app, Request $request)
     {
-        $usersModel = new UsersModel($app);
-        $adsTab = $usersModel->countUserAds();
-
         $pageLimit = 4;
         $page = (int) $request->get('page', 1);
 
         try {
+            $usersModel = new UsersModel($app);
+            $adsTab = $usersModel->countUserAds();
+            
             $pagesCount = $usersModel->countUsersPages($pageLimit);
             $page = $usersModel->getCurrentPageNumber($page, $pagesCount);
             $users = $usersModel->getUsersPage($page, $pageLimit);
@@ -131,122 +132,199 @@ class UsersController implements ControllerProviderInterface
             'role_id' => $role
         );
 
-        $form = $app['form.factory']->createBuilder('form', $data)
-            ->add(
-                'login',
-                'text',
-                array(
-                    'constraints' => array(
-                        new Assert\NotBlank(), new Assert\Length(
-                            array(
-                                'min' => 5,
-                                'minMessage' =>
-                                    'Use more than 4 characters',
-                            )
-                        )
-                    )
-                )
-            )
-            ->add(
-                'password',
-                'password',
-                array(
-                    'constraints' => array(
-                        new Assert\NotBlank(), new Assert\Length(
-                            array(
-                                'min' => 5,
-                                'minMessage' =>
-                                    'Use more than 4 characters',
-                            )
-                        )
-                    )
-                )
-            )
-            ->add(
-                'confirm_password',
-                'password',
-                array(
-                    'constraints' => array(
-                        new Assert\NotBlank(), new Assert\Length(
-                            array(
-                                'min' => 5,
-                                'minMessage' =>
-                                    'Use more than 4 characters',
-                            )
-                        )
-                    )
-                )
-            )
-            ->getForm();
 
-        $form->handleRequest($request);
+        try {
+            $form = $app['form.factory']->createBuilder('form', $data)
+                ->add(
+                    'login',
+                    'text',
+                    array(
+                        'constraints' => array(
+                            new Assert\NotBlank(), new Assert\Length(
+                                array(
+                                    'min' => 5,
+                                    'minMessage' =>
+                                        'Use more than 4 characters',
+                                )
+                            )
+                        )
+                    )
+                )
+                ->add(
+                    'password',
+                    'repeated',
+                    array(
+                        'type' => 'password',
+                        'invalid_message' => 'The password fields must match.',
+                        'options' => array('attr' => array('class' => 'password-field')),
+                        'required' => true,
+                        'first_options'  => array(
+                            'label' => 'Password',
+                            'attr' => array('placeholder' => 'More than 4 characters')
+                        ),
+                        'second_options' => array(
+                            'label' => 'Repeat password',
+                            'attr' => array('placeholder' => 'More than 4 characters')
+                        ),
+                        'constraints' => array(
+                            new Assert\NotBlank(),
+                            new Assert\Length(
+                                array(
+                                    'min' => 5,
+                                    'minMessage' =>
+                                        'Use more than 4 characters',
+                                )
+                            )
+                        )
+                    )
+                )
+                ->add(
+                    'phone_number',
+                    'text',
+                    array(
+                        'attr' => array(
+                             'placeholder' => 'Format: xxx xxx xxxx',
+                        ),
+                        'constraints' => array(
+                            new Assert\NotBlank(), new Assert\Length(
+                                array(
+                                    'min' => 10,
+                                    'max' => 12,
+                                    'minMessage' =>
+                                        'Use exactelty 10 numbers',
+                                    'maxMessage' =>
+                                        'Use exactelty 10 numbers',
+                                )
+                            ),
+                            new Assert\Regex(
+                                array(
+                                    'pattern' => "/^\(?([0-9]{3})\)?([ .-]?)([0-9]{3})([ .-]?)([0-9]{4})$/",
+                                    //'match' =>   true,
+                                    'message' => 'Use only numbers - format: xxx xxx xxxx',
+                                )
+                            )
+                        )
+                    )
+                )
+                // ->add(
+                    // 'password',
+                    // 'password',
+                    // array(
+                        // 'constraints' => array(
+                            // new Assert\NotBlank(), new Assert\Length(
+                                // array(
+                                    // 'min' => 5,
+                                    // 'minMessage' =>
+                                        // 'Use more than 4 characters',
+                                // )
+                            // )
+                        // )
+                    // )
+                // )
+                // ->add(
+                    // 'confirm_password',
+                    // 'password',
+                    // array(
+                        // 'constraints' => array(
+                            // new Assert\NotBlank(), new Assert\Length(
+                                // array(
+                                    // 'min' => 5,
+                                    // 'minMessage' =>
+                                        // 'Use more than 4 characters',
+                                // )
+                            // )
+                        // )
+                    // )
+                // )
+                ->getForm();
+
+            $form->handleRequest($request);
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in creating form';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in creating form'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
 
         if ($form->isValid()) {
-            $data = $form->getData();
+            try {
+                $data = $form->getData();
 
-            $data['login'] = $app
-                ->escape($data['login']);
-            $data['password'] = $app
-                ->escape($data['password']);
-            $data['confirm_password'] = $app
-                ->escape($data['confirm_password']);
+                $data['login'] = $app
+                    ->escape($data['login']);
+                $data['password'] = $app
+                    ->escape($data['password']);
+                $data['confirm_password'] = $app
+                    ->escape($data['confirm_password']);
+                $data['phone_number'] = $app
+                        ->escape($data['phone_number']);
 
-            if ($data['password'] === $data['confirm_password']) {
+
                 $password = $app['security.encoder.digest']
                     ->encodePassword("{$data['password']}", '');
 
                 $checkLogin = $this->model->getUserByLogin(
                     $data['login']
                 );
+            } catch (\Exception $e) {
+                $errors[] = 'Something went wrong in preparing data';
 
-                if (!$checkLogin === $checkLogin || !$checkLogin) {
-                    try {
-                        $this->model->addUser(
-                            $form->getData(),
-                            $password
-                        );
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger',
+                        'content' => 'Something went wrong in preparing data'
+                    )
+                );
+                return $app['twig']->render(
+                    'errors/404.twig'
+                );
+            }
+            if (!$checkLogin === $checkLogin || !$checkLogin) {
+                try {
+                    $data = $form->getData();
 
-                        $app['session']->getFlashBag()->add(
-                            'message',
-                            array(
-                                'type' => 'success',
-                                'content' => 'Account has been
-                                 created. You can login now.'
-                            )
-                        );
+                    $this->model->addUser(
+                        $data,
+                        $password
+                    );
+                    $last = $this->model->getLastUser();
+                    $this->model->addDetails($data, $last['id']);
 
-                        return $app->redirect(
-                            $app['url_generator']
-                                ->generate(
-                                    'auth_login'
-                                ),
-                            301
-                        );
-                    } catch (\Exception $e) {
-                        $app['session']->getFlashBag()->add(
-                            'message',
-                            array(
-                                'type' => 'warning',
-                                'content' => 'Something went wrong. User was not created'
-                            )
-                        );
-                        return $app['twig']->render(
-                            'errors/500.twig'
-                        );
-                    }
-                } else {
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success',
+                            'content' => 'Account has been
+                             created. You can login now.'
+                        )
+                    );
+
+                    return $app->redirect(
+                        $app['url_generator']
+                            ->generate(
+                                'auth_login'
+                            ),
+                        301
+                    );
+                } catch (\Exception $e) {
                     $app['session']->getFlashBag()->add(
                         'message',
                         array(
                             'type' => 'warning',
-                            'content' => 'This login is already taken.'
+                            'content' => 'Something went wrong. User was not created'
                         )
                     );
                     return $app['twig']->render(
-                        'users/add.twig',
-                        array(
-                            'form' => $form->createView()
-                        )
+                        'errors/500.twig'
                     );
                 }
             } else {
@@ -254,10 +332,9 @@ class UsersController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'warning',
-                        'content' => 'Passwords are not correct.'
+                        'content' => 'This login is already taken.'
                     )
                 );
-
                 return $app['twig']->render(
                     'users/add.twig',
                     array(
@@ -265,6 +342,22 @@ class UsersController implements ControllerProviderInterface
                     )
                 );
             }
+            // } else {
+                // $app['session']->getFlashBag()->add(
+                    // 'message',
+                    // array(
+                        // 'type' => 'warning',
+                        // 'content' => 'Passwords are not correct.'
+                    // )
+                // );
+
+                // return $app['twig']->render(
+                    // 'users/add.twig',
+                    // array(
+                        // 'form' => $form->createView()
+                    // )
+                // );
+            // }
         }
         return $app['twig']->render(
             'users/add.twig',
@@ -285,34 +378,49 @@ class UsersController implements ControllerProviderInterface
      */
     public function editAction(Application $app, Request $request)
     {
-        $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
-
-        if ($app['security']->isGranted('ROLE_ADMIN')) {
+        try {
             $usersModel = new UsersModel($app);
-            $id = (int) $request->get('id', 0);
-        } else {
-            $id = $idLoggedUser;
-        }
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
 
-        $user = $usersModel->getUser($id);
-        $token = $app['security']->getToken();
-        $loggedUser = $token->getUser()->getUsername();
-        $currentUser = $this->model->getUserByLogin($loggedUser);
-
-        if (!$app['security']->isGranted('ROLE_ADMIN')) {
-            if ((int)$currentUser['id'] !== (int)$id) {
-                echo 'You can not edit this account';
-                redirect($app['url_generator']->generate('/ads/'), 301);
+            if ($app['security']->isGranted('ROLE_ADMIN')) {
+                $usersModel = new UsersModel($app);
+                $id = (int) $request->get('id', 0);
+            } else {
+                $id = $idLoggedUser;
             }
+
+            $user = $usersModel->getUser($id);
+            $token = $app['security']->getToken();
+            $loggedUser = $token->getUser()->getUsername();
+            $currentUser = $this->model->getUserByLogin($loggedUser);
+
+            if (!$app['security']->isGranted('ROLE_ADMIN')) {
+                if ((int)$currentUser['id'] !== (int)$id) {
+                    echo 'You can not edit this account';
+                    redirect($app['url_generator']->generate('/ads/'), 301);
+                }
+            }
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in preparation process';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in preparation process'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
         }
 
-        $data = array(
-            'id' => $user['id'],
-            'login' => $user['login'],
-            'password' => '',
-            'confirm_password' => '',
-        );
+            $data = array(
+                'id' => $user['id'],
+                'login' => $user['login'],
+                'password' => '',
+                'confirm_password' => '',
+            );
 
         if (count($user)) {
             $form = $app['form.factory']->createBuilder('form', $data)
@@ -333,25 +441,17 @@ class UsersController implements ControllerProviderInterface
                 )
                 ->add(
                     'password',
-                    'password',
+                    'repeated',
                     array(
+                        'type' => 'password',
+                        'invalid_message' => 'The password fields must match.',
+                        'options' => array('attr' => array('class' => 'password-field')),
+                        'required' => true,
+                        'first_options'  => array('label' => 'Password'),
+                        'second_options' => array('label' => 'Repeat password'),
                         'constraints' => array(
-                            new Assert\NotBlank(), new Assert\Length(
-                                array(
-                                    'min' => 5,
-                                    'minMessage' =>
-                                        'Use more than 4 characters',
-                                )
-                            )
-                        )
-                    )
-                )
-                ->add(
-                    'confirm_password',
-                    'password',
-                    array(
-                        'constraints' => array(
-                            new Assert\NotBlank(), new Assert\Length(
+                            new Assert\NotBlank(),
+                            new Assert\Length(
                                 array(
                                     'min' => 5,
                                     'minMessage' =>
@@ -367,16 +467,17 @@ class UsersController implements ControllerProviderInterface
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $data = $form->getData();
+                try {
+                    $data = $form->getData();
 
-                $data['login'] = $app
-                    ->escape($data['login']);
-                $data['password'] = $app
-                    ->escape($data['password']);
-                $data['confirm_password'] = $app
-                    ->escape($data['confirm_password']);
+                    $data['login'] = $app
+                        ->escape($data['login']);
+                    $data['password'] = $app
+                        ->escape($data['password']);
+                    $data['confirm_password'] = $app
+                        ->escape($data['confirm_password']);
 
-                if ($data['password'] === $data['confirm_password']) {
+
                     $password = $app['security.encoder.digest']
                         ->encodePassword("{$data['password']}", '');
 
@@ -384,43 +485,56 @@ class UsersController implements ControllerProviderInterface
                         ->getUserByLogin(
                             $data['login']
                         );
+                } catch (\Exception $e) {
+                    $errors[] = 'Something went wrong in preparing data';
 
-                    if ($data['login'] === $checkLogin ||
-                        !$checkLogin ||
-                        (int)$user['id'] ===(int)$checkLogin['id']) {
-                        try {
-                            $this->model->saveUser($data, $password);
-
-                            $app['session']->getFlashBag()->add(
-                                'message',
-                                array(
-                                    'type' => 'success',
-                                    'content' => 'Account edited.'
-                                )
-                            );
-                            return $app->redirect(
-                                $app['url_generator']->generate(
-                                    '/users/view'
-                                ),
-                                301
-                            );
-                        } catch (\Exception $e) {
-                            $errors[] = 'Something went wrong';
-                            
-                            $app['session']->getFlashBag()->add(
-                                'message',
-                                array(
-                                    'type' => 'danger',
-                                    'content' => 'Something went wrong. '
-                                )
-                            );
-                            return $app['twig']->render(
-                                'errors/500.twig'
-                            );
-                        }
-                    }
-
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger',
+                            'content' => 'Something went wrong in preparing data'
+                        )
+                    );
+                    return $app['twig']->render(
+                        'errors/404.twig'
+                    );
                 }
+                if ($data['login'] === $checkLogin ||
+                    !$checkLogin ||
+                    (int)$user['id'] ===(int)$checkLogin['id']) {
+                    try {
+                        $this->model->saveUser($data, $password);
+
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success',
+                                'content' => 'Account edited.'
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate(
+                                '/users/view'
+                            ),
+                            301
+                        );
+                    } catch (\Exception $e) {
+                        $errors[] = 'Something went wrong';
+                        
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'danger',
+                                'content' => 'Something went wrong. '
+                            )
+                        );
+                        return $app['twig']->render(
+                            'errors/500.twig'
+                        );
+                    }
+                }
+
+                //}
             }
 
                 return $app['twig']->render(
@@ -459,18 +573,33 @@ class UsersController implements ControllerProviderInterface
      */
     public function numberAction(Application $app, Request $request)
     {
-        //$id = (int) $request->get('id', 0);
-        $id = $this->model->getIdCurrentUser($app);
+        try {
+            //$id = (int) $request->get('id', 0);
+            $id = $this->model->getIdCurrentUser($app);
 
-        $usersModel = new UsersModel($app);
-        $user = $usersModel->getUser($id);
-        $token = $app['security']->getToken();
-        
-        $phone = $usersModel->getPhone($id);
+            $usersModel = new UsersModel($app);
+            $user = $usersModel->getUser($id);
+            $token = $app['security']->getToken();
+            
+            $phone = $usersModel->getPhone($id);
 
-        $data = array(
-            'id' => $user['id']
-        );
+            $data = array(
+                'id' => $user['id']
+            );
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting data';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in getting data'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
 
         if (count($user)) {
             $form = $app['form.factory']->createBuilder('form', $data)
@@ -478,6 +607,9 @@ class UsersController implements ControllerProviderInterface
                     'phone_number',
                     'text',
                     array(
+                        'attr' => array(
+                             'placeholder' => 'Format: xxx xxx xxxx',
+                        ),
                         'constraints' => array(
                             new Assert\NotBlank(), new Assert\Length(
                                 array(
@@ -585,16 +717,33 @@ class UsersController implements ControllerProviderInterface
      */
     public function roleAction(Application $app, Request $request)
     {
-        $id = (int) $request->get('id', 0);
+        try {
+            $id = (int) $request->get('id', 0);
 
-        $usersModel = new UsersModel($app);
-        $user = $usersModel->getUser($id);
-        $token = $app['security']->getToken();
-        
-        $choiceRole = $usersModel->getRolesList();
+            $usersModel = new UsersModel($app);
+            $user = $usersModel->getUser($id);
+            $token = $app['security']->getToken();
+            
+            $choiceRole = $usersModel->getRolesList();
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting data';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in getting data'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
 
         $data = array(
-            'id' => $user['id']
+            'id' => $user['id'],
+            'role_id' => $user['role_id'],
+            'old_role' => $user['role_id']
         );
 
         if (count($user)) {
@@ -618,8 +767,28 @@ class UsersController implements ControllerProviderInterface
                     ->escape($data['id']);
                 $data['role_id'] = $app
                     ->escape($data['role_id']);
+                $data['old_role'] = $app
+                    ->escape($data['old_role']);
 
                 try {
+                    if ($data['old_role'] == 1 && $data['role_id'] == 2) {
+                        $admin = $usersModel->countAdmins();
+
+                        if ($admin['admin'] == 1) {
+                            $app['session']->getFlashBag()->add(
+                                'message',
+                                array(
+                                    'type' => 'danger',
+                                    'content' => 'You can not change this user role. It is the last admin user.'
+                                )
+                            );
+                            return $app->redirect(
+                                $app['url_generator']->generate(
+                                    '/user/panel'
+                                )
+                            );
+                        }
+                    }
                     $this->model->changeRole($data);
 
                     $app['session']->getFlashBag()->add(
@@ -688,29 +857,58 @@ class UsersController implements ControllerProviderInterface
      */
     public function deleteAction(Application $app, Request $request)
     {
-        $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
-
-        if ($app['security']->isGranted('ROLE_ADMIN')) {
+        try {
             $usersModel = new UsersModel($app);
-            $id = (int) $request->get('id', 0);
-        } else {
-            $id = $idLoggedUser;
-        }
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
 
-        $user = $usersModel->getUser($id);
-        $token = $app['security']->getToken();
-        $loggedUser = $token->getUser()->getUsername();
-        $currentUser = $this->model->getUserByLogin($loggedUser);
+            if ($app['security']->isGranted('ROLE_ADMIN')) {
+                $usersModel = new UsersModel($app);
+                $id = (int) $request->get('id', 0);
+            } else {
+                $id = $idLoggedUser;
+            }
 
-        if (!$app['security']->isGranted('ROLE_ADMIN')) {
-            if ((int)$currentUser['id'] !== (int)$id) {
-                echo 'You can not delete this account';
+            $user = $usersModel->getUser($id);
+            $token = $app['security']->getToken();
+            $loggedUser = $token->getUser()->getUsername();
+            $currentUser = $this->model->getUserByLogin($loggedUser);
+            
+            $delUser = $usersModel->getUser($id);
+            if ($delUser['role'] == 'ROLE_ADMIN') {
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger',
+                        'content' => 'You can not delete admin account. Pass it to someone else.'
+                    )
+                );
                 return $app->redirect(
-                    $app['url_generator']->generate('/ads/'),
+                    $app['url_generator']->generate('/user/panel'),
                     301
                 );
             }
+            if (!$app['security']->isGranted('ROLE_ADMIN')) {
+                if ((int)$currentUser['id'] !== (int)$id) {
+                    echo 'You can not delete this account';
+                    return $app->redirect(
+                        $app['url_generator']->generate('/ads/'),
+                        301
+                    );
+                }
+            }
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting user';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in getting user'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
         }
 
         $data = array();
@@ -726,13 +924,15 @@ class UsersController implements ControllerProviderInterface
             ->add('Yes', 'submit')
             ->add('No', 'submit')
             ->getForm();
+        // $form = $app['form.factory']
+            // ->createBuilder(new DeleteForm(), $data)->getForm();
 
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            if ($form->get('No')->isClicked()) {
-                $data = $form->getData();
+            //$data = $form->getData();
 
+            if ($form->get('No')->isClicked()) {
                 return $app->redirect(
                     $app['url_generator']->generate(
                         '/'
@@ -741,6 +941,20 @@ class UsersController implements ControllerProviderInterface
                 );
             } else {
                 try {
+                    // $delUser = $usersModel->getUser($id);
+                    // if($delUser['role'] == 'ROLE_ADMIN'){
+                        // $app['session']->getFlashBag()->add(
+                            // 'message',
+                            // array(
+                                // 'type' => 'danger',
+                                // 'content' => 'You can not delete admin account. Pass it to someone else.'
+                            // )
+                        // );
+                        // return $app['twig']->render(
+                            // 'errors/403.twig'
+                        // );
+                    // }
+
                     $adsModel = new AdsModel($app);
                     $adsModel->deleteUsersAds($id);
                     $usersModel->deletePhone($id);
@@ -796,18 +1010,33 @@ class UsersController implements ControllerProviderInterface
      */
     public function viewAction(Application $app, Request $request)
     {
-        $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
-
-        if ($app['security']->isGranted('ROLE_ADMIN')) {
+        try {
             $usersModel = new UsersModel($app);
-            $id = (int) $request->get('id', 0);
-        } else {
-            $id = $idLoggedUser;
-        }
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
 
-        $user = $usersModel-> getUser($id);
-        $number = $usersModel-> getPhone($id);
+            if ($app['security']->isGranted('ROLE_ADMIN')) {
+                $usersModel = new UsersModel($app);
+                $id = (int) $request->get('id', 0);
+            } else {
+                $id = $idLoggedUser;
+            }
+
+            $user = $usersModel-> getUser($id);
+            $number = $usersModel-> getPhone($id);
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
 
         return $app['twig']->render(
             'users/view.twig',
@@ -829,8 +1058,23 @@ class UsersController implements ControllerProviderInterface
      */
     public function passwordAction(Application $app, Request $request)
     {
-        $id = $this->model->getIdCurrentUser($app);
-        $user = $this->model->getUserById($id);
+        try {
+            $id = $this->model->getIdCurrentUser($app);
+            $user = $this->model->getUserById($id);
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting user';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in getting user'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
 
         if (count($user)) {
             $data = array(
@@ -840,8 +1084,14 @@ class UsersController implements ControllerProviderInterface
             $form = $app['form.factory']->createBuilder('form', $data)
                 ->add(
                     'password',
-                    'password',
+                    'repeated',
                     array(
+                        'type' => 'password',
+                        'invalid_message' => 'The password fields must match.',
+                        'options' => array('attr' => array('class' => 'password-field')),
+                        'required' => true,
+                        'first_options'  => array('label' => 'Password'),
+                        'second_options' => array('label' => 'Repeat password'),
                         'constraints' => array(
                             new Assert\NotBlank(),
                             new Assert\Length(
@@ -850,42 +1100,26 @@ class UsersController implements ControllerProviderInterface
                                     'minMessage' =>
                                         'Use more than 4 characters',
                                 )
-                            ),
-                            new Assert\Type(
-                                array(
-                                    'type' => 'string',
-                                    'message' => 'Password not correct',
-                                )
-                            ),
-                        )
-                    )
-                )
-                ->add(
-                    'confirm_password',
-                    'password',
-                    array(
-                        'constraints' => array(
-                            new Assert\NotBlank(),
-                            new Assert\Length(
-                                array(
-                                    'min' => 5,
-                                    'minMessage' =>
-                                        'Use more than 4 characters',
-                                )
-                            ),
-                            new Assert\Type(
-                                array(
-                                    'type' => 'string',
-                                    'message' => 'Password is not correct',
-                                )
-                            ),
+                            )
                         )
                     )
                 )
                 ->add(
                     'new_password',
-                    'password',
+                    'repeated',
                     array(
+                        'type' => 'password',
+                        'invalid_message' => 'The password fields must match.',
+                        'options' => array('attr' => array('class' => 'password-field')),
+                        'required' => true,
+                        'first_options'  => array(
+                            'label' => 'New password',
+                            'attr' => array('placeholder' => 'Use more than 4 characters')
+                        ),
+                        'second_options' => array(
+                            'label' => 'Repeat new password',
+                            'attr' => array('placeholder' => 'Use more than 4 characters')
+                        ),
                         'constraints' => array(
                             new Assert\NotBlank(),
                             new Assert\Length(
@@ -894,52 +1128,21 @@ class UsersController implements ControllerProviderInterface
                                     'minMessage' =>
                                         'Use more than 4 characters',
                                 )
-                            ),
-                            new Assert\Type(
-                                array(
-                                    'type' => 'string',
-                                    'message' => 'Password is not correct',
-                                )
-                            ),
-                        )
-                    )
-                )
-                ->add(
-                    'confirm_new_password',
-                    'password',
-                    array(
-                        'constraints' => array(
-                            new Assert\NotBlank(),
-                            new Assert\Length(
-                                array(
-                                    'min' => 5,
-                                    'minMessage' =>
-                                        'Use more than 4 characters',
-                                )
-                            ),
-                            new Assert\Type(
-                                array(
-                                    'type' => 'string',
-                                    'message' => 'Password is not correct',
-                                )
-                            ),
+                            )
                         )
                     )
                 )
                 ->getForm();
+            try {
+                $form->handleRequest($request);
 
-            $form->handleRequest($request);
+                if ($form->isValid()) {
+                    $data = $form->getData();
 
-            if ($form->isValid()) {
-                $data = $form->getData();
+                    $oldPassword = $app['security.encoder.digest']
+                        ->encodePassword($data['password'], '');
 
-                $oldPassword = $app['security.encoder.digest']
-                    ->encodePassword($data['password'], '');
-
-                if ($oldPassword === $user['password']) {
-                    if ($data['new_password']===$data['confirm_new_password']
-                        && $data['password'] === $data['confirm_password']
-                    ) {
+                    if ($oldPassword === $user['password']) {
                         $data['new_password'] = $app['security.encoder.digest']
                             ->encodePassword($data['new_password'], '');
 
@@ -958,34 +1161,43 @@ class UsersController implements ControllerProviderInterface
                                 301
                             );
                         } catch (\Exception $e) {
-                            $errors[] = 'Something went wrong';
-                        }
+                            $errors[] = 'Something went wrong in getting data';
 
+                            $app['session']->getFlashBag()->add(
+                                'message',
+                                array(
+                                    'type' => 'danger',
+                                    'content' => 'Something went wrong in getting data'
+                                )
+                            );
+                            return $app['twig']->render(
+                                'errors/404.twig'
+                            );
+                        }
                     } else {
                         $app['session']->getFlashBag()->add(
                             'message',
                             array(
-                                'type' => 'warning',
-                                'content' => 'Passwords are not the same'
+                                'type' => 'danger',
+                                'content' => 'Current password is not correct'
                             )
                         );
-                        return $app['twig']->render(
-                            'users/password.twig',
-                            array(
-                                'form' => $form->createView()
-                            )
-                        );
-                    }
-                } else {
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'danger',
-                            'content' => 'Current password is not correct'
-                        )
-                    );
 
+                    }
                 }
+            } catch (\Exception $e) {
+                $errors[] = 'Something went wrong in getting data';
+
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger',
+                        'content' => 'Something went wrong in getting data'
+                    )
+                );
+                return $app['twig']->render(
+                    'errors/404.twig'
+                );
             }
         } else {
             $app['session']->getFlashBag()->add(
@@ -1021,14 +1233,28 @@ class UsersController implements ControllerProviderInterface
      */
     public function accountAction(Application $app, Request $request)
     {
-        $id = (int) $request->get('id', 0);
-        $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
+        try {
+            $id = (int) $request->get('id', 0);
+            $usersModel = new UsersModel($app);
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting user';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in getting user'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
 
         try {
             $info = $usersModel->getUser($idLoggedUser);
 
-            $usersModel = new UsersModel($app);
             $pageLimit = 4;
             $page = (int) $request->get('page', 1);
 

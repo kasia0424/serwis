@@ -3,18 +3,18 @@
 {% block title %}My account{% endblock %}
 
 {% block content %}
-    <div class="pull-right">
+    <div class="pull-right options">
         <h3 class="text-center"> Your account </h3>
         <a href="{{ url('/user/view', {'id': info.id}) }}" title="View user" class="btn btn-primary btn-lg active" role="button" style="display:block;">View my data</a>
         <a href="{{ url('/user/edit', {'id': info.id}) }}" title="Edit password" class="btn btn-primary btn-lg active" role="button" style="display:block;">Edit password</a>
         <a href="{{ url('/user/number') }}" title="Edit phone number" class="btn btn-primary btn-lg active" role="button" style="display:block;">Edit phone number</a>
-        <a href="{{ url('/user/delete', {'id': info.id}) }}" title="Delete user" onclick="return confirm('Sure you want to delete your account?')" class="btn btn-primary btn-lg active" role="button" style="display:block;">Delete account</a>
+        <a href="{{ url('/user/delete', {'id': info.id}) }}" title="Delete user" class="btn btn-primary btn-lg active" role="button" style="display:block;">Delete account</a>
     </div>
 
-    <h1 class="text-center" style="display:block;">
+    <h1 class="text-center smaller" style="display:block;">
         Your ads
     </h1>
-    <div>
+    <div class="clear account">
     {% if ads|length > 0 %}
         <table class="table table-striped">
             <thead>
@@ -40,22 +40,22 @@
                         <a href="{{ url('/ads/edit', {'id': ad.id}) }}" title="Edit ad" class="btn btn-default btn-lg active" role="button">Edit</a>
                     </td>
                     <td>
-                        <a href="{{ url('/ads/delete', {'id': ad.id}) }}" title="Delete ad" onclick="return confirm('Sure you want to delete this ad?')" class="btn btn-default btn-lg active" role="button">Delete</a>
+                        <a href="{{ url('/ads/delete', {'id': ad.id, 'user': ad.user_id}) }}" title="Delete ad" class="btn btn-default btn-lg active" role="button">Delete</a>
                     </td>
 
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-        <div>
+        <div class="pages">
             {% if paginator.page > 1 %}
                 {% set previous = (paginator.page - 1) %}
-                <a href="{{ url('/user/account', {'page': previous}) }}" title="{{ 'previous page'|trans }}"><img src="{{ app.request.basepath }}/media/arrow.png"  height="15px" width="50px" style="transform:rotate(180deg);"></a>
+                <a href="{{ url('/user/account', {'page': previous}) }}" title="{{ 'previous page'}}"><img src="{{ app.request.basepath }}/media/arrow.png"  height="15px" width="50px" style="transform:rotate(180deg);"></a>
             {%  endif %}
 
             {% if paginator.page < paginator.pagesCount %}
                 {% set next = (paginator.page + 1) %}
-                <a href="{{ url('/user/account', {'page': next}) }}" title="{{ 'next page'|trans }}" class="pull-right"><img src="{{ app.request.basepath }}/media/arrow.png"  height="15px" width="50px"></a>
+                <a href="{{ url('/user/account', {'page': next}) }}" title="{{ 'next page' }}" class="pull-right"><img src="{{ app.request.basepath }}/media/arrow.png"  height="15px" width="50px"></a>
             {% endif  %}
         </div>
     {% else %}

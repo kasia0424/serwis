@@ -6,13 +6,16 @@
     <h1 class="text-center">
         Change user's role
     </h1>
-    
-    <h3> <strong>User: </strong> {{ user.login }} <br/>
+
+    <h3 class="not">
+        <strong>User: </strong> {{ user.login }} <br/>
         <strong> Role:</strong> {{ user.role }}
     </h3>
-    <form action="" method="post">
-        {{ form_widget(form) }}
-    </form>
+    <div class="smallest">
+        <form action="" method="post">
+            {{ form_widget(form) }}
+        </form>
+    </div>
 
     <h4>
         {% if is_granted('ROLE_ADMIN') %}

@@ -61,6 +61,7 @@ class UsersModel
      * Gets users phonr number
      *
      * @access public
+     * @param integer $id Record Id
      * @return array Result
      */
     public function getPhone($id)
@@ -71,9 +72,10 @@ class UsersModel
     }
     
     /**
-     * Updates users phonr number
+     * Updates users phone number
      *
      * @access public
+     * @param array $data Form data
      * @return array Result
      */
     public function updatePhone($data)
@@ -116,6 +118,24 @@ class UsersModel
             $data[$row['id']] = $row['name'];
         }
         return $data;
+    }
+
+
+    /**
+     * Counts admin users
+     *
+     * @access public
+     * @return array Result
+     */
+    public function countAdmins()
+    {
+        $query = 'SELECT
+                    COUNT(`role_id`) as admin
+                FROM
+                    `so_users`
+                WHERE role_id = 1';
+        $result = $this->db->fetchAssoc($query);
+        return $result;
     }
 
     
@@ -224,8 +244,10 @@ class UsersModel
      /**
      * Add new user
      *
-     * @param $data
+     * @param array $data Form data
+     * @param string $password User password
      * @access public
+     * @retun mixed Result
      */
     public function addUser($data, $password)
     {
@@ -245,16 +267,17 @@ class UsersModel
     /**
      * Add user's phone number
      *
-     * @param $data
+     * @param array $data Form data
      * @access public
+     * @retun mixed Result
      */
-    public function addDetails($data)
+    public function addDetails($data, $id)
     {
         $query = "INSERT INTO `so_details` (`user_id`, `phone_number`) VALUES (?, ?)";
         $this->db->executeQuery(
             $query,
             array(
-                $data['id'],
+                $id,
                 $data['phone_number'],
             )
         );
@@ -263,9 +286,11 @@ class UsersModel
     /**
      * Update user
      *
-     * @param $data
+     * @param array $data Form data
+     * @param string $password User password
      *
      * @access public
+     * @retun mixed Result
      */
 
     public function saveUser($data, $password)
@@ -296,8 +321,9 @@ class UsersModel
     /**
      * Delete user
      *
-     * @param $id
+     * @param integer $id Record Id
      * @access public
+     * @retun mixed Result
      */
     public function deleteUser($id)
     {
@@ -307,22 +333,23 @@ class UsersModel
     
     
     /**
-     * Delete phone
+     * Delete user phone
      *
      * @param $id
      * @access public
+     * @retun mixed Result
      */
-    public function deletePhone($id)
-    {
-        $sql = 'DELETE FROM so_details WHERE user_id = ?';
-        $this->db->executeQuery($sql, array((int) $id));
-    }
+    // public function deletePhone($id)
+    // {
+        // $sql = 'DELETE FROM so_details WHERE user_id = ?';
+        // $this->db->executeQuery($sql, array((int) $id));
+    // }
 
     /**
      * Get user by id
      *
      * @access public
-     * @param $id
+     * @param integer $id Record Id
      * @return array users
      *
      */
@@ -336,14 +363,45 @@ class UsersModel
             return array();
         }
     }
+    
+    /**
+     * Gets last added user
+     *
+     * @access public
+     * @return array Result
+     */
+    public function getLastUser()
+    {
+        $sql = 'SELECT id
+            FROM so_users
+            ORDER BY id DESC
+            LIMIT 1';
+        $result = $this->db->fetchAssoc($sql);
+        return $result;
+    }
 
+
+    /**
+     * Updates users password
+     *
+     * @param array $data Form data
+     * @param integer $id Record Id
+     * @access public
+     * @retun mixed Result
+     */
     public function changePassword($data, $id)
     {
         $sql = 'UPDATE so_users SET password=? WHERE id= ?';
-
         $this->db->executeQuery($sql, array($data['new_password'], $id));
     }
-    
+
+
+    /**
+     * Get user list
+     *
+     * @access public
+     * @return array Result
+     */
     public function getUserList()
     {
         $sql = 'SELECT a.id as id, a.login, a.password, a.role_id, so_roles.name as role
@@ -354,6 +412,13 @@ class UsersModel
         return $result;
     }
     
+    
+    /**
+     * Get user information by id
+     *
+     * @access public
+     * @return array Result
+     */
     public function countUserAds()
     {
         $sql = 'CREATE TEMPORARY TABLE IF NOT EXISTS ads_count 
@@ -365,7 +430,16 @@ class UsersModel
         $result = $this->db->fetchAll($query);
         return $result;
     }
-    
+
+
+    /**
+     * Get user information by id
+     *
+     * @param integer $id Record Id
+     *
+     * @access public
+     * @return array Result
+     */
     public function getUserById($id)
     {
         $sql = 'SELECT * FROM so_users WHERE id = ? Limit 1';
@@ -375,10 +449,10 @@ class UsersModel
     /**
      * Change user's role
      *
-     * @param  Integer $id
+     * @param  array $data Form data
      *
      * @access public
-     * @return Void
+     * @retun mixed Result
      */
     public function changeRole($data)
     {
@@ -389,7 +463,7 @@ class UsersModel
     /**
      * Get current logged user id
      *
-     * @param $app
+     * @param Silex\Application $app Silex application
      *
      * @access public
      * @return mixed
@@ -405,7 +479,7 @@ class UsersModel
     /**
      * Get information about actual logged user
      *
-     * @param $app
+     * @param Silex\Application $app Silex application
      *
      * @access protected
      * @return mixed
@@ -462,11 +536,13 @@ class UsersModel
      * @access public
      * @param integer $page Page number
      * @param integer $limit Number of records on single page
+     * @param integer $id Record Id
      * @retun array Result
      */
     public function getUsersAdsPage($page, $limit, $id)
     {
-        $query = 'SELECT so_ads.id, title, text, postDate, category_id, so_categories.name as category, photo_id
+        $query = 'SELECT so_ads.id, title, text, postDate, category_id, user_id,
+            so_categories.name as category, photo_id
             FROM so_ads INNER JOIN so_categories
             ON so_categories.id = so_ads.category_id where user_id = :id LIMIT :start, :limit';
         $statement = $this->db->prepare($query);

@@ -15,9 +15,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Model\CategoriesModel;
-use Form\CategoryForm;
 use Model\AdsModel;
 use Model\UsersModel;
+use Form\CategoryForm;
+use Form\DeleteForm;
 
 class CategoriesController implements ControllerProviderInterface
 {
@@ -53,13 +54,14 @@ class CategoriesController implements ControllerProviderInterface
      */
     public function indexAction(Application $app, Request $request)
     {
-        $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
-        
-        $pageLimit = 7;
-        $page = (int) $request->get('page', 1);
-        $categoriesModel = new CategoriesModel($app);
         try {
+            $usersModel = new UsersModel($app);
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
+            
+            $pageLimit = 7;
+            $page = (int) $request->get('page', 1);
+            $categoriesModel = new CategoriesModel($app);
+        
             $pagesCount = $categoriesModel->countCategoriesPages($pageLimit);
             $page = $categoriesModel->getCurrentPageNumber($page, $pagesCount);
             $categories = $categoriesModel->getCategoriesPage($page, $pageLimit);
@@ -93,59 +95,88 @@ class CategoriesController implements ControllerProviderInterface
      */
     public function addAction(Application $app, Request $request)
     {
-        $data = array(
-            'name' => 'Name of category',
-            'description' => 'Describe category in few words',
-        );
+        try {
+            // $data = array(
+                // 'name' => 'Name of category',
+                // 'description' => 'Describe category in few words',
+            // );
+            $form = $app['form.factory']
+                ->createBuilder(new CategoryForm(), $data)->getForm();
+            $form->remove('id');
 
 
-        $form = $app['form.factory']->createBuilder('form', $data)
-            ->add(
-                'name',
-                'text',
-                array(
-                    'constraints' => array(
-                        new Assert\NotBlank(), new Assert\Length(
-                            array(
-                                'min' => 3
-                            )
-                        )
+            // $form = $app['form.factory']->createBuilder('form', $data)
+                // ->add(
+                    // 'name',
+                    // 'text',
+                    // array(
+                        // 'attr' => array(
+                             // 'placeholder' => 'Name',
+                        // ),
+                        // 'label' => false,
+                        // 'constraints' => array(
+                            // new Assert\NotBlank(), new Assert\Length(
+                                // array(
+                                    // 'min' => 3,
+                                    // 'minMessage' =>'Use more than 2 characters',
+                                // )
+                            // )
+                        // )
+                    // )
+                // )
+                // ->add(
+                    // 'description',
+                    // 'textarea',
+                    // array(
+                        // 'attr' => array(
+                             // 'placeholder' => 'Description',
+                        // ),
+                        // 'label' => false,
+                        // 'constraints' => array(
+                            // new Assert\NotBlank(), new Assert\Length(
+                                // array(
+                                    // 'min' => 3,
+                                    // 'minMessage' =>'Use more than 2 characters',
+                                // )
+                            // )
+                        // )
+                    // )
+                // )
+                // ->getForm();
+
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $categoriesModel = new CategoriesModel($app);
+                $data = $form->getData();
+
+                $categoriesModel->saveCategory($data);
+
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'success',
+                        'content' => 'Category has been added.'
                     )
-                )
-            )
-            ->add(
-                'description',
-                'textarea',
-                array(
-                    'constraints' => array(
-                        new Assert\NotBlank(), new Assert\Length(
-                            array(
-                                'min' => 3
-                            )
-                        )
-                    )
-                )
-            )
-            ->getForm();
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('/categories/'),
+                    301
+                );
+            }
 
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $categoriesModel = new CategoriesModel($app);
-            $data = $form->getData();
-
-            $categoriesModel->saveCategory($data);
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
-                    'type' => 'success',
-                    'content' => 'Category has been added.'
+                    'type' => 'danger',
+                    'content' => 'Something went wrong'
                 )
             );
-            return $app->redirect(
-                $app['url_generator']->generate('/categories/'),
-                301
+            return $app['twig']->render(
+                'errors/404.twig'
             );
         }
 
@@ -166,9 +197,24 @@ class CategoriesController implements ControllerProviderInterface
      */
     public function editAction(Application $app, Request $request)
     {
-        $categoriesModel = new CategoriesModel($app);
-        $id = (int) $request->get('id', 0);
-        $category = $categoriesModel->getCategory($id);
+        try {
+            $categoriesModel = new CategoriesModel($app);
+            $id = (int) $request->get('id', 0);
+            $category = $categoriesModel->getCategory($id);
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong with getting current data';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Category not found'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
 
         $data = array(
             'id'=> $id,
@@ -226,13 +272,16 @@ class CategoriesController implements ControllerProviderInterface
                     )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('/categories/'),
+                    $app['url_generator']->generate(
+                        '/categories/view',
+                        array('id'=> $id)
+                    ),
                     301
                 );
 
             }
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong';
+            $errors[] = 'Something went wrong in form';
 
             $app['session']->getFlashBag()->add(
                 'message',
@@ -264,8 +313,23 @@ class CategoriesController implements ControllerProviderInterface
      */
     public function deleteAction(Application $app, Request $request)
     {
-        $id = (int) $request -> get('id', 0);
-        $categoriesModel = new CategoriesModel($app);
+        try {
+            $id = (int) $request -> get('id', 0);
+            $categoriesModel = new CategoriesModel($app);
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong with getting current data';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Category not found'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
         
         $restId = '19';
         
@@ -282,33 +346,92 @@ class CategoriesController implements ControllerProviderInterface
             );
         }
 
-
+        //
+        $data = array();
         try {
-            $ads = $categoriesModel->getCategoryAds($id);
-            foreach ($ads as $ad) {
-                $categoriesModel->restCategory($ad['id']);
-            };
-            
-            $categoriesModel -> deleteCategory($id);
-            
+            $form = $app['form.factory']
+                ->createBuilder(new DeleteForm(), $data)->getForm();
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong with creating form';
+
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
-                    'type' => 'success',
-                    'content' => 'Category has been deleted. Ads from this category are in Pozostałe category.'
+                    'type' => 'danger',
+                    'content' => 'Category not found'
                 )
             );
-        } catch (\Exception $e) {
-            $errors[] = 'Something went wrong';
-            $app->abort(404, $app['translator']->trans('Category not found'));
-
             return $app['twig']->render(
                 'errors/404.twig'
             );
         }
-        return $app->redirect(
-            $app['url_generator']->generate('/categories/'),
-            301
+        // $form = $app['form.factory']->createBuilder('form', $data)
+            // ->add(
+                // 'id',
+                // 'hidden',
+                // array(
+                    // 'data' => $id,
+                // )
+            // )
+            // ->add('Yes', 'submit')
+            // ->add('No', 'submit')
+            // ->getForm();
+
+        $form->handleRequest($request);
+        
+        if ($form->isValid()) {
+            if ($form->get('No')->isClicked()) {
+                // $data = $form->getData();
+
+                return $app->redirect(
+                    $app['url_generator']->generate(
+                        '/categories/'//view',
+                        // array('id'=> $id)
+                    ),
+                    301
+                );
+            } else {
+        //
+                try {
+                    $ads = $categoriesModel->getCategoryAds($id);
+                    foreach ($ads as $ad) {
+                        $categoriesModel->restCategory($ad['id']);
+                    };
+                    
+                    $categoriesModel -> deleteCategory($id);
+                    
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success',
+                            'content' => 'Category has been deleted. Ads from this category are in Pozostałe category.'
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate(
+                            '/categories/'
+                        ),
+                        301
+                    );
+                } catch (\Exception $e) {
+                    $errors[] = 'Something went wrong in deleting process';
+
+                    return $app['twig']->render(
+                        'errors/404.twig'
+                    );
+                }
+            // return $app->redirect(
+                // $app['url_generator']->generate('/categories/'),
+                // 301
+            // );
+            }
+        }
+        return $app['twig']->render(
+            '/categories/delete.twig',
+            array(
+                'form' => $form->createView(),
+                $data
+            )
         );
     }
 
@@ -322,10 +445,10 @@ class CategoriesController implements ControllerProviderInterface
      */
     public function viewAction(Application $app, Request $request)
     {
-        $categoriesModel = new CategoriesModel($app);
         $id = (int) $request->get('id', 0);
 
         try {
+            $categoriesModel = new CategoriesModel($app);
             $category = $categoriesModel->getCategory($id);
             $pageLimit = 3;
             $page = (int) $request->get('page', 1);
@@ -337,7 +460,7 @@ class CategoriesController implements ControllerProviderInterface
                 $paginator = array('page' => $page, 'pagesCount' => $pagesCount);
                 $this->view['ads'] = $ads;
             } catch (\Exception $e) {
-                $errors[] = 'Something went wrong';
+                $errors[] = 'Something went wrong in getting pages';
 
                 $app['session']->getFlashBag()->add(
                     'message',
@@ -352,8 +475,8 @@ class CategoriesController implements ControllerProviderInterface
             }
 
         } catch (\Exception $e) {
-            //$errors[] = 'Something went wrong';
-            //$app->abort(404, $app['translator']->trans('Category not found'));
+            $errors[] = 'Something went wrong';
+
             $app['session']->getFlashBag()->add(
                 'message',
                 array(

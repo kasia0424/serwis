@@ -1,0 +1,138 @@
+body{
+    padding-bottom: 2em;
+}
+#content{
+    padding: 0 1em;
+}
+#content >div{
+    border: 1px solid lightgrey;
+    padding: 2em;
+}
+div.pages{
+    border: 0 !important;
+}
+h1{
+    margin: 0 auto;
+    margin-bottom: 1.5em;
+    border: 1px solid black;
+    max-width: 70%;
+    padding: 0.5em;
+}
+em{
+    font-style: italic;
+}
+strong{
+    font-weight: bold;
+}
+.clear{
+    clear: both;
+    height: 0;
+}
+.Tborder{
+    border-top: 1px solid lightgrey;
+    margin-top: 2em;
+    padding-top: 1em;
+    text-decoration: underline;
+}
+.under{
+    margin-top: 2em;
+    padding-top: 1em;
+    text-decoration: underline;
+}
+.not{
+    font-weight: bold;
+   /*  background-color: lightblue; */
+    border: 1px solid black;
+    padding: 0.5em;
+    width: 25%;
+}
+.cke_skin_kama .cke_dialog_body { z-index: inherit; }
+.cke_chrome, #cke_form_text{
+    z-index: 9999 !important;
+}
+
+/* login */
+.login, .right{
+    margin: 0 auto;
+    width: 40%;
+}
+.login input[type='text'], input[type='password']{
+    width: 200px;
+}
+.login input[type='submit']{
+    margin-top: 0.5em;
+}
+
+#loginForm_login{
+    width: 230px;
+}
+#form_phone_number, #form_login{
+    width: 220px;
+}
+#form_password_first{
+    width: 250px;
+}
+    
+/* add */
+/* .right input{
+    float: right;
+}
+.right label{
+    float: left;
+} */
+
+.smallest{
+    width: 500px;
+}
+
+/* panel */
+.options{
+    display: block;
+/*     float: right;*/
+    margin-bottom: 10px; 
+}
+.smaller{
+    max-width: 60%;
+}
+.account{
+    margin-top: 25px;
+}
+
+
+/* forms */
+form{
+    margin: 0 2em;
+    margin-bottom: 2em;
+    min-height: 50px;
+}
+form:after{
+    content:' ';
+    height: 0;
+    clear: both;
+}
+label{
+    margin: 0.5em;
+    vertical-align: top;
+}
+input[type='text'], textarea{
+    width: 400px;
+}
+textarea{
+    height: 200px
+}
+input[type='submit']{
+    padding: 0.5em;
+    margin-left: 95px;
+}
+button[type='submit']{
+    float: left;
+    margin-right: 0.5em;
+    margin-left: 0;
+}
+/*
+-wysrodkować pole tworzenia ads'a 
+-wyrównać forms'y do prawej
+-change role
+-number
+-pass
+*/

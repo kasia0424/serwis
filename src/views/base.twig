@@ -5,8 +5,13 @@
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link href="{{ app.request.basepath }}/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+            <link href="{{ app.request.basepath }}/assets/style.css" rel="stylesheet" media="screen">
             <script src="//code.jquery.com/jquery-1.11.2.min.js" type="text/javascript"></script>
-            <script src="{{ app.request.basepath }}/assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+            <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.10/jquery-ui.min.js"></script>
+		{#<link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.10/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />
+            <script src="{{ app.request.basepath }}/assets/ckeditor/ckeditor.js"></script>
+            <script src="{{ app.request.basepath }}/assets/ckeditor/adapters/jquery.js"></script>
+            #}<script src="{{ app.request.basepath }}/assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
             <title  class="page-header">{% block title %}{% endblock %}</title>
         {% endblock %}
     </head>
@@ -42,5 +47,25 @@
             
             {% block content %}{% endblock %}
         </div>
+        <script>
+            {#
+            CKEDITOR.replace( 'form[text]',{
+                language: 'pl'
+            });
+            
+$(document).ready(function(e) {
+
+		$("#pop_up").dialog({
+			modal: true,
+			closeOnEscape: true,
+			position: [20, 65]
+		})
+		.height("auto"); 
+		$("form[text]").ckeditor();
+
+});
+#}
+            
+        </script>
     </body>
 </html>

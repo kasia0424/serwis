@@ -50,6 +50,7 @@ class AdsModel
         $query = 'SELECT so_ads.id, title, text, postDate, category_id, so_categories.name as category, user_id
             FROM so_ads JOIN so_categories ON so_ads.category_id = so_categories.id';
         $result = $this->db->fetchAll($query);
+        return $result;
     }
 
 
@@ -100,13 +101,29 @@ class AdsModel
             return array();
         }
     }
+    
+    /**
+     * Gets last added ad
+     *
+     * @access public
+     * @return array Result
+     */
+    public function getLastAd()
+    {
+        $sql = 'SELECT id
+            FROM so_ads
+            ORDER BY id DESC
+            LIMIT 1';
+        $result = $this->db->fetchAssoc($sql);
+        return $result;
+    }
 
 
     /**
      * Update ad
      *
      * @access public
-     * @param integer $id Record Id
+     * @param array $data Form data
      * @return array Result
      */
     public function updateAd($data)
@@ -141,17 +158,18 @@ class AdsModel
      */
     public function saveAd($ad)
     {
-        if (isset($ad['id'])
-            && ($ad['id'] != '')
-            && ctype_digit((string)$ad['id'])) {
-            // update record
-            $id = $ad['id'];
-            unset($ad['id']);
-            return $this->db->update('so_ads', $ad, array('id' => $id));
-        } else {
-            // add new record
-            return $this->db->insert('so_ads', $ad);
-        }
+        $sql = 'INSERT INTO so_ads (title, text, category_id, postDate, user_id )
+            VALUES (?, ?, ?, ?, ?)';
+        $this->db->executeQuery(
+            $sql,
+            array(
+                $ad['title'],
+                $ad['text'],
+                (int) $ad['category_id'],
+                $ad['postDate'],
+                (int) $ad['user_id']
+            )
+        );
     }
 
 
@@ -160,6 +178,7 @@ class AdsModel
      *
      * @access public
      * @param integer $id Record Id
+     * @retun mixed Result
      */
     public function deleteAd($id)
     {
@@ -173,6 +192,7 @@ class AdsModel
      *
      * @access public
      * @param integer $id Record Id
+     * @retun mixed Result
      */
     public function deleteUsersAds($id)
     {

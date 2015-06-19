@@ -19,6 +19,7 @@ use Form\AdForm;
 use Model\CategoriesModel;
 use Model\UsersModel;
 use Model\PhotosModel;
+use Form\DeleteForm;
 
 class AdsController implements ControllerProviderInterface
 {
@@ -55,35 +56,32 @@ class AdsController implements ControllerProviderInterface
      */
     public function indexAction(Application $app, Request $request)
     {
-        $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
+        try {
+            $usersModel = new UsersModel($app);
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
 
-        $this->view['loggedUser'] = $idLoggedUser;
-        // $view = array();
-        // $adsModel = new AdsModel($app);
+            $this->view['loggedUser'] = $idLoggedUser;
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting user';
 
-        // try {
-            // $view['ads'] = $adsModel->getAll();
-        // } catch (\Exception $e) {
-            // $errors[] = 'Something went wrong';
-
-            // $app['session']->getFlashBag()->add(
-                // 'message',
-                // array(
-                    // 'type' => 'danger',
-                    // 'content' => 'Ads not found'
-                // )
-            // );
-            // return $app['twig']->render(
-                // 'errors/404.twig'
-            // );
-        // }
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in getting user'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
         // return $app['twig']
             // ->render('ads/index.twig', $view);
         $pageLimit = 5;
         $page = (int) $request->get('page', 1);
-        $adsModel = new AdsModel($app);
+        
         try {
+            $adsModel = new AdsModel($app);
             $pagesCount = $adsModel->countAdsPages($pageLimit);
             $page = $adsModel->getCurrentPageNumber($page, $pagesCount);
             $ads = $adsModel->getAdsPage($page, $pageLimit);
@@ -117,110 +115,204 @@ class AdsController implements ControllerProviderInterface
      */
     public function addAction(Application $app, Request $request)
     {
-        $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
-        $number = $usersModel->getPhone($idLoggedUser);
-        if ($number == null) {
+        try {
+            $usersModel = new UsersModel($app);
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
+            $number = $usersModel->getPhone($idLoggedUser);
+            if ($number == null) {
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger',
+                        'content' => 'Add your phone number before.'
+                    )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('/user/number'),
+                    301
+                );
+            }
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting user';
+
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Add your phone number before.'
+                    'content' => 'Something went wrong in getting user data'
                 )
             );
-            return $app->redirect(
-                $app['url_generator']->generate('/user/number'),
-                301
+            return $app['twig']->render(
+                'errors/404.twig'
             );
         }
         
+        try {
+            $categoriesModel = new CategoriesModel($app);
+            $choiceCategory = $categoriesModel->getCategoriesList();
 
-        $categoriesModel = new CategoriesModel($app);
-        $choiceCategory = $categoriesModel->getCategoriesList();
+            $datetime = date('Y-m-d H:i:s');
 
-        $datetime = date('Y-m-d H:i:s');
+            $data = array(
+                'postDate' => $datetime,
+                'user_id' => $idLoggedUser
+            );
 
-        $data = array(
-            'postDate' => $datetime,
-            'user_id' => $idLoggedUser
-        );
+            $form = $app['form.factory']
+                ->createBuilder(new DeleteForm(), $data)->getForm();
 
-
-        $form = $app['form.factory']->createBuilder('form', $data)
-            ->add(
-                'title',
-                'text',
-                array(
-                    'constraints' => array(
-                        new Assert\NotBlank(), new Assert\Length(
-                            array(
-                                'min' => 3,
-                                'max' => 30,
-                                'minMessage' =>'Use more than 2 characters',
-                                'maxMessage' =>'Use less than 30 characters',
-
-                            )
+            $form = $app['form.factory']->createBuilder('form', $data)
+                ->add(
+                    'title',
+                    'text',
+                    array(
+                        'attr' => array(
+                             'placeholder' => 'Title',
                         ),
-                        new Assert\Regex(
-                            array(
-                                'pattern' => "/[a-zA-z]{3,}/",
-                                //'match' =>   true,
-                                'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
+                        'label' => false,
+                        'constraints' => array(
+                            new Assert\NotBlank(), new Assert\Length(
+                                array(
+                                    'min' => 3,
+                                    'max' => 30,
+                                    'minMessage' =>'Use more than 2 characters',
+                                    'maxMessage' =>'Use less than 30 characters',
+
+                                )
+                            ),
+                            new Assert\Regex(
+                                array(
+                                    'pattern' => "/[a-zA-z]{3,}/",
+                                    //'match' =>   true,
+                                    'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
+                                )
                             )
                         )
                     )
                 )
-            )
-            ->add(
-                'text',
-                'textarea',
-                array(
-                    'constraints' => array(
-                        new Assert\NotBlank(),new Assert\Length(
-                            array(
-                                'min' => 5,
-                                'minMessage' =>'Use more than 5 characters',
-
-                            )
+                ->add(
+                    'text',
+                    'textarea',
+                    array(
+                        'attr' => array(
+                             'placeholder' => 'Content of your ad',
                         ),
-                        new Assert\Regex(
-                            array(
-                                'pattern' => "/[a-zA-z]{3,}/",
-                                'message' => 'It\'s your ad - use at least 3 letters in it.',
+                        'label' => false,
+                        'constraints' => array(
+                            new Assert\NotBlank(),new Assert\Length(
+                                array(
+                                    'min' => 5,
+                                    'minMessage' =>'Use more than 4 characters',
+
+                                )
+                            ),
+                            new Assert\Regex(
+                                array(
+                                    'pattern' => "/[a-zA-z]{3,}/",
+                                    'message' => 'It\'s your ad - use at least 3 letters in it.',
+                                )
                             )
                         )
                     )
                 )
-            )
-            ->add(
-                'category_id',
-                'choice',
-                array(
-                    'choices' => $choiceCategory
+                ->add(
+                    'category_id',
+                    'choice',
+                    array(
+                        'placeholder' => 'Choose category',
+                        'choices' => $choiceCategory
+                    )
                 )
-            )
-            ->getForm();
-
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $adsModel = new AdsModel($app);
-            $data = $form->getData();
-            $catId=$data['category_id'];
-
-            $adsModel->saveAd($data);
+                // ->add(
+                    // 'file',
+                    // 'file',
+                    // array(
+                        // 'label' => 'Choose photo',
+                        // 'required' => false,
+                        // 'constraints' => array(new Assert\Image())
+                    // )
+                // )
+                // ->add('Upload', 'submit')
+                ->getForm();
+            // $form = $app['form.factory']
+                // ->createBuilder(new AdForm(), array('choiceCategory' =>$choiceCategory))->getForm();
+            // $form->remove('id');
+            //$form->remove('user_id');
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in creating form';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
-                    'type' => 'success',
-                    'content' => 'Your advertisement has been added.'
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in creating form'
                 )
             );
-            return $app->redirect(
-                $app['url_generator']->generate('/ads/'),
-                301
+            return $app['twig']->render(
+                'errors/404.twig'
             );
+        }
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            var_dump($data);
+            try {
+                //file
+                // if ($form->get('Upload')->isClicked()) {
+                    // $files = $request->files->get($form->getName());
+                    // var_dump($files);
+
+                    // if ($files != null) {
+                        // $path = dirname(dirname(dirname(__FILE__))).'/web/media';
+                        // $photosModel = new PhotosModel($app);
+                        // $originalFilename = $files['image']->getClientOriginalName();
+                        // $newFilename = $photosModel->createName($originalFilename);
+                        // $files['image']->move($path, $newFilename);
+                        
+                        // $last = $adsModel->getLastAd();
+                        // //var_dump($last);die();
+
+                    // //$adId = $data['ad_id'];
+                    
+                        // $photosModel->saveFile($newFilename, $last['id']);
+                    // }
+                // } 
+                //
+                
+                $adsModel = new AdsModel($app);
+                $data = $form->getData();
+                //$catId=$data['category_id'];
+
+                $adsModel->saveAd($data);
+                
+                
+
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'success',
+                        'content' => 'Your ad has been added.'
+                    )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('/ads/'),
+                    301
+                );
+            } catch (\Exception $e) {
+                $errors[] = 'Something went wrong in processing data';
+
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger',
+                        'content' => 'Something went wrong in processing data'
+                    )
+                );
+                return $app['twig']->render(
+                    'errors/404.twig'
+                );
+            }
         }
         return $app['twig']->render(
             'ads/add.twig',
@@ -240,48 +332,64 @@ class AdsController implements ControllerProviderInterface
      */
     public function editAction(Application $app, Request $request)
     {
-        $adsModel = new AdsModel($app);
-        $id = (int) $request->get('id', 0);
-        $ad = $adsModel->getAd($id);
+        try {
+            $id = (int) $request->get('id', 0);
+            $adsModel = new AdsModel($app);
+            $ad = $adsModel->getAd($id);
 
-        if (!$ad) {
+            if (!$ad) {
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger',
+                        'content' => 'Ad not found'
+                    )
+                );
+                return $app['twig']->render(
+                    'errors/404.twig'
+                );
+            }
+       
+            $usersModel = new UsersModel($app);
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
+            if (!$app['security']->isGranted('ROLE_ADMIN')) {
+                if ((int)$ad['user_id'] !== (int)$idLoggedUser) {
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger',
+                            'content' => 'This is not your ad - you can not edit it.'
+                        )
+                    );
+                    return $app['twig']->render(
+                        'errors/403.twig'
+                    );
+                }
+            }
+
+            $categoriesModel = new CategoriesModel($app);
+            $choiceCategory = $categoriesModel->getCategoriesList();
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting data';
+
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Ad not found'
+                    'content' => 'Something went wrong in getting data'
                 )
             );
             return $app['twig']->render(
                 'errors/404.twig'
             );
         }
-       
-        $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
-        if (!$app['security']->isGranted('ROLE_ADMIN')) {
-            if ((int)$ad['user_id'] !== (int)$idLoggedUser) {
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'danger',
-                        'content' => 'This is not your ad - you can not edit it.'
-                    )
-                );
-                return $app['twig']->render(
-                    'errors/403.twig'
-                );
-            }
-        }
-
-        $categoriesModel = new CategoriesModel($app);
-        $choiceCategory = $categoriesModel->getCategoriesList();
+        
 
         $data = array(
             'id'=> $id,
             'title' => $ad['title'],
             'text' => $ad['text'],
-            'category_id' => $ad['ategory_id'],
+            'category_id' => $ad['category_id'],
             'postDate' => $ad['postDate'],
             'user_id' => $ad['user_id']
         );
@@ -296,6 +404,8 @@ class AdsController implements ControllerProviderInterface
                     'category_id',
                     'choice',
                     array(
+                        'placeholder' => 'Choose category',
+                        'label' => 'Category',
                         'choices' => $choiceCategory
                     )
                 )
@@ -303,10 +413,24 @@ class AdsController implements ControllerProviderInterface
                     'title',
                     'text',
                     array(
+                        'attr' => array(
+                             'placeholder' => 'Title',
+                        ),
                         'constraints' => array(
                             new Assert\NotBlank(), new Assert\Length(
                                 array(
-                                    'min' => 5
+                                    'min' => 3,
+                                    'max' => 30,
+                                    'minMessage' =>'Use more than 2 characters',
+                                    'maxMessage' =>'Use less than 30 characters',
+
+                                )
+                            ),
+                            new Assert\Regex(
+                                array(
+                                    'pattern' => "/[a-zA-z]{3,}/",
+                                    //'match' =>   true,
+                                    'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
                                 )
                             )
                         )
@@ -316,10 +440,21 @@ class AdsController implements ControllerProviderInterface
                     'text',
                     'textarea',
                     array(
+                        'attr' => array(
+                             'placeholder' => 'Content of your ad',
+                        ),
                         'constraints' => array(
-                            new Assert\NotBlank(), new Assert\Length(
+                            new Assert\NotBlank(),new Assert\Length(
                                 array(
-                                    'min' => 5
+                                    'min' => 5,
+                                    'minMessage' =>'Use more than 4 characters',
+
+                                )
+                            ),
+                            new Assert\Regex(
+                                array(
+                                    'pattern' => "/[a-zA-z]{3,}/",
+                                    'message' => 'It\'s your ad - use at least 3 letters in it.',
                                 )
                             )
                         )
@@ -345,7 +480,10 @@ class AdsController implements ControllerProviderInterface
                     )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('/ads/'),
+                    $app['url_generator']->generate(
+                        '/ads/view',
+                        array('id'=> $id)
+                    ),
                     301
                 );
             }
@@ -381,51 +519,124 @@ class AdsController implements ControllerProviderInterface
      */
     public function deleteAction(Application $app, Request $request)
     {
-        // $form = $app['form.factory']
-            // ->createBuilder(new AdForm(), $ad)->getForm();
-        // $view = array();
-        // return $app['twig']->render('ads/delete.twig', $view);
-        $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
-
-        $id = (int) $request -> get('id', 0);
-        $user = (int) $request -> get('user', 0);
-
-        if (!$app['security']->isGranted('ROLE_ADMIN')) {
-            if ((int)$user !== (int)$idLoggedUser) {
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'danger',
-                        'content' => 'This is not your ad - you can not delete it.'
-                    )
-                );
-                return $app['twig']->render(
-                    'errors/403.twig'
-                );
-            }
-        }
-
-        $adsModel = new AdsModel($app);
         try {
-            $adsModel -> deleteAd($id);
+            // $view = array();
+            // return $app['twig']->render('ads/delete.twig', $view);
+            $usersModel = new UsersModel($app);
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
+
+            $id = (int) $request -> get('id', 0);
+            $user = (int) $request -> get('user', 0);
+
+            if (!$app['security']->isGranted('ROLE_ADMIN')) {
+                if ((int)$user !== (int)$idLoggedUser) {
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger',
+                            'content' => 'This is not your ad - you can not delete it.'
+                        )
+                    );
+                    return $app['twig']->render(
+                        'errors/403.twig'
+                    );
+                }
+            }
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting user';
+
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
-                    'type' => 'success',
-                    'content' => 'Ad has been deleted.'
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in getting user'
                 )
             );
-        } catch (\Exception $e) {
-            $app->abort(
-                404,
-                $app['translator']->trans('Ad not found')
+            return $app['twig']->render(
+                'errors/404.twig'
             );
         }
-        return $app->redirect(
-            $app['url_generator']->generate('/ads/'),
-            301
+
+        //
+        try {
+            $data = array();
+            $form = $app['form.factory']
+                ->createBuilder(new DeleteForm(), $ad)->getForm();
+            // $form = $app['form.factory']->createBuilder('form', $data)
+                // ->add(
+                    // 'id',
+                    // 'hidden',
+                    // array(
+                        // 'data' => $id,
+                    // )
+                // )
+                // ->add('Yes', 'submit')
+                // ->add('No', 'submit')
+                // ->getForm();
+
+            $form->handleRequest($request);
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in creating form';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in creating form'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
+        
+        if ($form->isValid()) {
+            if ($form->get('No')->isClicked()) {
+                //$data = $form->getData();
+
+                return $app->redirect(
+                    $app['url_generator']->generate(
+                        '/'
+                    ),
+                    301
+                );
+            } else {
+                try {
+                    $adsModel = new AdsModel($app);
+                    $adsModel -> deleteAd($id);
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success',
+                            'content' => 'Ad has been deleted.'
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate(
+                            '/user/account'
+                        ),
+                        301
+                    );
+                } catch (\Exception $e) {
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger',
+                            'content' => 'Ad not found'
+                        )
+                    );
+                    return $app['twig']->render('404.twig');
+                }
+            }
+        }
+        return $app['twig']->render(
+            '/ads/delete.twig',
+            array(
+                'form' => $form->createView(),
+                $data
+            )
         );
+
     }
 
     /**
@@ -440,12 +651,27 @@ class AdsController implements ControllerProviderInterface
     public function viewAction(Application $app, Request $request)
     {
         $id = (int)$request->get('id', null);
-        
-        $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
-
-        $adsModel = new AdsModel($app);
         try {
+            $usersModel = new UsersModel($app);
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting user';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in getting user'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
+
+        
+        try {
+            $adsModel = new AdsModel($app);
             $ad = $adsModel->getAd($id);
             $number = $usersModel-> getPhone($ad['user_id']);
 
@@ -462,13 +688,12 @@ class AdsController implements ControllerProviderInterface
                 );
             }
 
-                $photosModel = new PhotosModel($app);
-                $photoTab= $photosModel->getPhoto($ad['id']);
-                $photo = $photoTab['name'];
+            $photosModel = new PhotosModel($app);
+            $photoTab= $photosModel->getPhoto($ad['id']);
+            $photo = $photoTab['name'];
 
         } catch (\Exception $e) {
             $errors[] = 'Something went wrong';
-            $app->abort(404, $app['translator']->trans('Ad not found'));
 
             return $app['twig']->render(
                 'errors/404.twig'

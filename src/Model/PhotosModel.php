@@ -49,10 +49,10 @@ class PhotosModel
      * @param array $name File namea
      * @retun mixed Result
      */
-    public function saveFile($name, $data)
+    public function saveFile($name, $adId)
     {
         $sql = 'INSERT INTO `so_photos` (`name`, ad_id) VALUES (?, ?)';
-        $this->_db->executeQuery($sql, array($name, $data['ad_id']));
+        $this->_db->executeQuery($sql, array($name, (int)$adId));
     }
 
 
@@ -128,7 +128,7 @@ class PhotosModel
      * Gets file by id
      *
      * @access public
-     * @param $id
+     * @param integer $id Record Id
      * @return file array Result
      */
     public function getPhoto($id)

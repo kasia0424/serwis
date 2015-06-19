@@ -15,4 +15,5 @@
         {{ form_widget(form) }}
         <input type="submit" name="submit" />
     </form>
+    <a href="{{ url('/ads/view', {'id': id}) }}" title="View ad" class="label label-primary text-uppercase">Back to ad</a>
 {% endblock %}
