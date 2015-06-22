@@ -1,6 +1,6 @@
 {% extends 'base.twig' %}
 
-{% block title %}Upload file{% endblock %}
+{% block title %}Upload photo to your ad{% endblock %}
 
 {% block content %}
     <h1 class="text-center">
@@ -11,9 +11,10 @@
             {{ flashMessage.content }}
         </div>
     {% endfor %}
-    <form action="{{ url('/photos/upload') }}" {{ form_enctype(form) }} method="post">
-        {{ form_widget(form) }}
-        <input type="submit" name="submit" />
-    </form>
+    <div>
+        <form action="{{ url('/photos/upload') }}" {{ form_enctype(form) }} method="post">
+            {{ form_widget(form) }}
+        </form>
+    </div>
     <a href="{{ url('/ads/view', {'id': id}) }}" title="View ad" class="label label-primary text-uppercase">Back to ad</a>
 {% endblock %}

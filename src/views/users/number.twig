@@ -10,7 +10,8 @@
     <h3 class="not">
         <strong>User: </strong> {{ user.login }} <br/>
         {% if number != null %}
-            <strong> Phone number:</strong> {{ number }}
+            <strong> Phone number:</strong><br/>
+            {{ number }}
         {% endif %}
     </h3>
     
@@ -21,10 +22,6 @@
     </div>
 
     <h4>
-        {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ url('/user/panel') }}" title="Users index" class="label label-primary text-uppercase">Back to panel</a>
-        {% else %}
-            <a href="{{ url('/user/account') }}" title="Users account" class="label label-primary text-uppercase">Back to account</a>
-        {% endif %}
+        <a href="{{ url('/user/account') }}" title="Users account" class="label label-primary text-uppercase">Back to account</a>
     </h4>
 {% endblock %}

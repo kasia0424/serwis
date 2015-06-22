@@ -28,6 +28,15 @@ use Model\AdsModel;
  */
 class FilesForm extends AbstractType
 {
+    /**
+     * Form builder.
+     *
+     * @access public
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     *
+     * @return FormBuilderInterface
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         return $builder
@@ -35,7 +44,20 @@ class FilesForm extends AbstractType
             'image',
             'file',
             array(
-                'label' => 'Choose file'
+                'label' => 'Choose file',
+                'constraints' => array(
+                    new Assert\Image(
+                        array(
+                            'mimeTypes' => array(
+                                "image/jpg",
+                                "image/jpeg",
+                                "image/gif",
+                                "image/png"
+                            ),
+                            'mimeTypesMessage' => "Photo should have one of the following formats: JPG, GIF or PNG."
+                        )
+                    )
+                )
             )
         )
         ->add(
@@ -45,7 +67,8 @@ class FilesForm extends AbstractType
                 'data' => $options['data']['ad_id'],
                 'label' => 'add_id'
             )
-        );
+        )
+        ->add('save', 'submit', array('label' => 'Upload file'));
     }
 
     /**

@@ -4,11 +4,13 @@
 
 {% block content %}
 
-    {% for flashMessage in app.session.getFlashBag.get('message') %}
-        <div class="alert alert-{{ flashMessage.type }}">
-            {{ flashMessage.content }}
-        </div>
-    {% endfor %}
+    <div class="error">
+        {% for flashMessage in app.session.getFlashBag.get('message') %}
+            <div class="alert alert-{{ flashMessage.type }}">
+                {{ flashMessage.content }}
+            </div>
+        {% endfor %}
+    </div>
 	
 	<p><a href="{{ url('/ads/') }}" title="Home">Back to the homepage.</a></p>
 

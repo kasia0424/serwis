@@ -83,8 +83,12 @@ $app->get(
          ),
      ),
      'security.access_rules' => array(
+         array('^/ads$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/ads/$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+         array('^/ads/\d$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+         array('^/categories$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/categories/$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+         array('^/categories/\d$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/auth/.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/user/add.$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
          array('^/ads/view.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
@@ -150,9 +154,6 @@ $app->error(
 
         if ($e instanceof Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
             $code = (string)$e->getStatusCode();
-            // return $app['twig']->render(
-                // 'errors/404.twig'
-            // );
         }
         if ($e instanceof Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException) {
             $code = (string)$e->getStatusCode();
@@ -162,10 +163,6 @@ $app->error(
         }
         
         if ($e instanceof Symfony\Component\HttpKernel\Exception\FatalErrorException) {
-            // return $app->redirect(
-                // $app['url_generator']->generate('/ads/'),
-                // 301
-            // );
             return $app['twig']->render(
                 'errors/default.twig'
             );

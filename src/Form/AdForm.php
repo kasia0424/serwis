@@ -9,9 +9,10 @@
 
 namespace Form;
 
+use Silex\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+//use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Model\CategoriesModel;
@@ -40,8 +41,8 @@ class AdForm extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $categoriesModel = new CategoriesModel($app);
-        $choiceCategory = $categoriesModel->getCategoriesDict();
+        // $categoriesModel = new CategoriesModel($app);
+        // $choiceCategory = $categoriesModel->getCategoriesList();
 
         return  $builder
             ->add(
@@ -55,14 +56,28 @@ class AdForm extends AbstractType
                 )
             )
             ->add(
+                'title',
                 'text',
-                'textarea',
                 array(
+                    'attr' => array(
+                         'placeholder' => 'Title',
+                    ),
+                    'label' => false,
                     'constraints' => array(
-                        new Assert\NotBlank(),new Assert\Length(
+                        new Assert\NotBlank(), new Assert\Length(
                             array(
-                                'min' => 5,
-                                'minMessage' =>'Use more than 5 characters',
+                                'min' => 3,
+                                'max' => 30,
+                                'minMessage' =>'Use more than 2 characters',
+                                'maxMessage' =>'Use less than 30 characters',
+
+                            )
+                        ),
+                        new Assert\Regex(
+                            array(
+                                'pattern' => "/[a-zA-z]{3,}/",
+                                //'match' =>   true,
+                                'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
                             )
                         )
                     )
@@ -70,11 +85,26 @@ class AdForm extends AbstractType
             )
             ->add(
                 'text',
-                'text',
+                'textarea',
                 array(
+                    'attr' => array(
+                         'placeholder' => 'Content of your ad',
+                    ),
+                    'label' => false,
                     'constraints' => array(
-                        new Assert\NotBlank(),
-                        new Assert\Length(array('min' => 5))
+                        new Assert\NotBlank(),new Assert\Length(
+                            array(
+                                'min' => 5,
+                                'minMessage' =>'Use more than 5 characters',
+
+                            )
+                        ),
+                        new Assert\Regex(
+                            array(
+                                'pattern' => "/[a-zA-z]{3,}/",
+                                'message' => 'It\'s your ad - use at least 3 letters in it.',
+                            )
+                        )
                     )
                 )
             )
@@ -82,19 +112,20 @@ class AdForm extends AbstractType
                 'category_id',
                 'choice',
                 array(
-                    'choices' => $choiceCategory
-                )
-            )
-            ->add(
-                'user_id',
-                'hidden',
-                array(
-                    'constraints' => array(
-                        new Assert\NotBlank(),
-                        new Assert\Type(array('type' => 'digit'))
-                    )
+                    'placeholder' => 'Choose category',
+                    'choices' => $options['data']['choiceCategory']
                 )
             );
+            // ->add(
+                // 'user_id',
+                // 'hidden',
+                // array(
+                    // 'constraints' => array(
+                        // new Assert\NotBlank(),
+                        // new Assert\Type(array('type' => 'digit'))
+                    // )
+                // )
+            // );
 
     }
 

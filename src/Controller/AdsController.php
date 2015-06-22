@@ -33,8 +33,9 @@ class AdsController implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $adsController = $app['controllers_factory'];
-        $adsController->get('/', array($this, 'indexAction'))
-            ->bind('/ads/');
+        $adsController->get('/', array($this, 'indexAction'));
+        $adsController->get('/{page}', array($this, 'indexAction'))
+                         ->value('page', 1)->bind('/ads/');
         $adsController->match('/add', array($this, 'addAction'))
             ->bind('/ads/add');
         $adsController->match('/edit/{id}', array($this, 'editAction'))
@@ -174,15 +175,14 @@ class AdsController implements ControllerProviderInterface
                                 array(
                                     'min' => 3,
                                     'max' => 30,
-                                    'minMessage' =>'Use more than 2 characters',
-                                    'maxMessage' =>'Use less than 30 characters',
+                                    'minMessage' =>'Use more than 2 characters in your title',
+                                    'maxMessage' =>'Use less than 30 characters in your title',
 
                                 )
                             ),
                             new Assert\Regex(
                                 array(
                                     'pattern' => "/[a-zA-z]{3,}/",
-                                    //'match' =>   true,
                                     'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
                                 )
                             )
@@ -201,14 +201,14 @@ class AdsController implements ControllerProviderInterface
                             new Assert\NotBlank(),new Assert\Length(
                                 array(
                                     'min' => 5,
-                                    'minMessage' =>'Use more than 4 characters',
+                                    'minMessage' =>'Use more than 4 characters in your ad content',
 
                                 )
                             ),
                             new Assert\Regex(
                                 array(
                                     'pattern' => "/[a-zA-z]{3,}/",
-                                    'message' => 'It\'s your ad - use at least 3 letters in it.',
+                                    'message' => 'It\'s your ad content - use at least 3 letters in it.',
                                 )
                             )
                         )
@@ -255,7 +255,7 @@ class AdsController implements ControllerProviderInterface
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            var_dump($data);
+            //var_dump($data);
             try {
                 //file
                 // if ($form->get('Upload')->isClicked()) {
@@ -684,7 +684,6 @@ class AdsController implements ControllerProviderInterface
 
             $photosModel = new PhotosModel($app);
             $photoTab= $photosModel->getPhoto($ad['id']);
-            $photo = $photoTab['name'];
 
         } catch (\Exception $e) {
             $errors[] = 'Something went wrong';
@@ -698,7 +697,7 @@ class AdsController implements ControllerProviderInterface
             'ads/view.twig',
             array(
                 'ad' => $ad,
-                'photo' => $photo,
+                'photo' => $photoTab,
                 'loggedUser' => $idLoggedUser,
                 'number' => $number['phone_number'],
             )

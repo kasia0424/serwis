@@ -4,7 +4,7 @@ body{
 #content{
     padding: 0 1em;
 }
-#content >div{
+#content >div, div.error{
     border: 1px solid lightgrey;
     padding: 2em;
 }
@@ -34,6 +34,9 @@ strong{
     padding-top: 1em;
     text-decoration: underline;
 }
+.marginT{
+    margin-top: 0.5em;
+}
 .under{
     margin-top: 2em;
     padding-top: 1em;
@@ -46,57 +49,21 @@ strong{
     padding: 0.5em;
     width: 25%;
 }
-.cke_skin_kama .cke_dialog_body { z-index: inherit; }
-.cke_chrome, #cke_form_text{
-    z-index: 9999 !important;
-}
-
-/* login */
-.login, .right{
-    margin: 0 auto;
-    width: 40%;
-}
-.login input[type='text'], input[type='password']{
-    width: 200px;
-}
-.login input[type='submit']{
-    margin-top: 0.5em;
-}
-
-#loginForm_login{
-    width: 230px;
-}
-#form_phone_number, #form_login{
-    width: 220px;
-}
-#form_password_first{
-    width: 250px;
-}
-    
-/* add */
-/* .right input{
-    float: right;
-}
-.right label{
-    float: left;
-} */
-
 .smallest{
     width: 500px;
 }
+td{
+    min-width: 150px;
+}
+/* .cke_skin_kama .cke_dialog_body { z-index: inherit; }
+.cke_chrome, #cke_form_text{
+    z-index: 9999 !important;
+} */
+.text a{
+    color: black;
+    cursor: pointer;
+}
 
-/* panel */
-.options{
-    display: block;
-/*     float: right;*/
-    margin-bottom: 10px; 
-}
-.smaller{
-    max-width: 60%;
-}
-.account{
-    margin-top: 25px;
-}
 
 
 /* forms */
@@ -129,6 +96,64 @@ button[type='submit']{
     margin-right: 0.5em;
     margin-left: 0;
 }
+
+
+
+/* login */
+.login, .right{
+    margin: 0 auto;
+    width: 40%;
+}
+.login input[type='text'], input[type='password']{
+    width: 200px;
+}
+.login input[type='submit']{
+    margin-top: 0.5em;
+}
+
+#loginForm_login{
+    width: 230px;
+}
+#form_phone_number, #form_login{
+    width: 220px;
+}
+#form_password_first{
+    width: 250px;
+}
+    
+/* add */
+/* .right input{
+    float: right;
+}
+.right label{
+    float: left;
+} */
+
+
+
+/* panel */
+.options{
+    display: block;
+/*     float: right;*/
+    margin-bottom: 10px; 
+}
+.smaller{
+    max-width: 60%;
+}
+span.clear {
+    height: 2px;
+    width: 100%;
+    clear: both;
+}
+.account{
+    margin-top: 25px;
+    height: 100%;
+}
+.account .pages{
+    clear: both;
+}
+
+
 /*
 -wysrodkować pole tworzenia ads'a 
 -wyrównać forms'y do prawej

@@ -31,8 +31,8 @@
                 <tbody>
                 {% for ad in ads %}
                     <tr>
-                        <td>{{ ad.title|e }}</td>
-                        <td>{{ ad.text|e }}</td>
+                        <td class="text"><a href="{{ url('/ads/view', {'id': ad.id}) }}" title="View ad">{{ ad.title|e }}</a></td>
+                        <td class="text"><a href="{{ url('/ads/view', {'id': ad.id}) }}" title="View ad">{{ ad.text|e }}</a></td>
                         <td>{{ ad.postDate|e }}</td>
                         <td><a href="{{ url('/categories/view', {'id': ad.category_id}) }}" title="Category">{{ ad.category|e }}</a></td>
                         <td>

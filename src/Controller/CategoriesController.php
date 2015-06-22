@@ -31,16 +31,18 @@ class CategoriesController implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $categoriesController = $app['controllers_factory'];
-        $categoriesController->get('/', array($this, 'indexAction'))
-            ->bind('/categories/');
+        $categoriesController->get('/', array($this, 'indexAction'));
+        $categoriesController->get('/{page}', array($this, 'indexAction'))
+                     ->value('page', 1)->bind('/categories/');
         $categoriesController->match('/add', array($this, 'addAction'))
             ->bind('/categories/add');
         $categoriesController->match('/edit/{id}', array($this, 'editAction'))
             ->bind('/categories/edit');
         $categoriesController->match('/delete/{id}', array($this, 'deleteAction'))
             ->bind('/categories/delete');
-        $categoriesController->get('/view/{id}', array($this, 'viewAction'))
-            ->bind('/categories/view');
+        $categoriesController->get('/view/{id}', array($this, 'viewAction'));
+        $categoriesController->get('/view/{id}/{page}', array($this, 'viewAction'))
+                     ->value('page', 1)->bind('/categories/view');
         return $categoriesController;
     }
 

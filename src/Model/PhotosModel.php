@@ -47,6 +47,7 @@ class PhotosModel
      *
      * @access public
      * @param array $name File namea
+     * @param integer $id Record Id
      * @retun mixed Result
      */
     public function saveFile($name, $adId)
@@ -60,7 +61,8 @@ class PhotosModel
      * Update file.
      *
      * @access public
-     * @param array $name File namea
+     * @param array $name File name
+     * @param array $data Form data
      * @retun mixed Result
      */
     public function updateFile($name, $data)
@@ -134,10 +136,25 @@ class PhotosModel
     public function getPhoto($id)
     {
         if ($id != '') {
-            $sql = 'SELECT name, ad_id FROM so_photos WHERE ad_id =?
+            $sql = 'SELECT id, name, ad_id FROM so_photos WHERE ad_id =?
             ORDER BY id DESC LIMIT 1';
             $result = $this->_db->fetchAssoc($sql, array((int) $id));
             return $result;
         }
+    }
+    
+    
+    /**
+     * Delete photo
+     *
+     * @access public
+     * @param integer $id Record Id
+     * @retun mixed Result
+     */
+    public function deletePhoto($id)
+    {
+        $id = $id;
+        $sql = 'DELETE FROM so_photos WHERE id = ?';
+        $this->_db->executeQuery($sql, array((int) $id));
     }
 }

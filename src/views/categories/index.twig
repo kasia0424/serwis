@@ -33,15 +33,11 @@
                         <td>{{ cat.description|e }}</td>
                         <td>
                             <a href="{{ url('/categories/view', {'id': cat.id}) }}" title="View category" class="btn btn-default btn-lg">View details</a>
-                        </td>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <td>
+                            {% if is_granted('ROLE_ADMIN') %}
                                 <a href="{{ url('/categories/edit', {'id': cat.id}) }}" title="Edit category" class="btn btn-default btn-lg">Edit</a>
-                            </td>
-                            <td>
                                 <a href="{{ url('/categories/delete', {'id': cat.id}) }}" title="Delete category" class="btn btn-default btn-lg">Delete</a>
-                            </td>
-                        {% endif %}
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

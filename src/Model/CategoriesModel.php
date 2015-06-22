@@ -221,6 +221,7 @@ class CategoriesModel
      * @access public
      * @param integer $page Page number
      * @param integer $limit Number of records on single page
+     * @param integer $id Record Id
      * @retun array Result
      */
     public function getCategoriesAdsPage($page, $limit, $id)
@@ -241,6 +242,7 @@ class CategoriesModel
      *
      * @access public
      * @param integer $limit Number of records on single page
+     * @param integer $id Record Id
      * @return integer Result
      */
     public function countCategoriesAdsPages($limit, $id)

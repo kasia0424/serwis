@@ -17,6 +17,7 @@ use Model\PhotosModel;
 use Model\AdsModel;
 use Model\UsersModel;
 use Form\FilesForm;
+use Form\DeleteForm;
 
 class PhotosController implements ControllerProviderInterface
 {
@@ -34,6 +35,8 @@ class PhotosController implements ControllerProviderInterface
             ->bind('/photos/');
         $photosController->match('/upload', array($this, 'upload'))
             ->bind('/photos/upload');
+        $photosController->match('/delete/{id}', array($this, 'delete'))
+            ->bind('/photos/delete');
         return $photosController;
     }
 
@@ -48,7 +51,6 @@ class PhotosController implements ControllerProviderInterface
     public function upload(Application $app, Request $request)
     {
         $adId =(int)$request->get('id', 0);
-        //$app['session']->set('ad', array('ad_id' => $adId));
 
         $adsModel = new AdsModel($app);
         $ad = $adsModel->getAd($adId);
@@ -98,7 +100,7 @@ class PhotosController implements ControllerProviderInterface
                     $photo = $photosModel->getPhoto($adId);
                     
                     if ($photo == null) {
-                        $photosModel->saveFile($newFilename, $data);
+                        $photosModel->saveFile($newFilename, $adId);
                     } else {
                         $photosModel->updateFile($newFilename, $data);
                     }
@@ -120,21 +122,21 @@ class PhotosController implements ControllerProviderInterface
                     $flag= true;
 
                 } catch (Exception $e) {
-                     $app['session']->getFlashBag()->add(
-                         'message',
-                         array(
-                             'type' => 'error',
-                             'content' => 'Can not upload file.'
-                         )
-                     );
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger',
+                            'content' => 'Can not upload file.'
+                        )
+                    );
                 }
 
             } else {
-                var_dump($form);
+                // var_dump($form);
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
-                        'type' => 'error',
+                        'type' => 'danger',
                         'content' => 'Form contains invalid data.'
                     )
                 );
@@ -143,7 +145,129 @@ class PhotosController implements ControllerProviderInterface
 
         return $app['twig']->render(
             'photos/upload.twig',
-            array('form' => $form->createView())
+            array(
+                'form' => $form->createView(),
+                'id' => $adId
+            )
         );
+    }
+    
+    
+    /**
+     * Delete action.
+     *
+     * @access public
+     * @param  Silex\Application $app Silex application
+     * @param  Symfony\Component\HttpFoundation\Request $request Request object
+     * @return string Output
+     */
+    public function delete(Application $app, Request $request)
+    {
+        try {
+            $usersModel = new UsersModel($app);
+            $idLoggedUser = $usersModel->getIdCurrentUser($app);
+
+            $id = (int) $request -> get('photo', 0);
+            $adId = (int) $request -> get('id', 0);
+            $user = (int) $request -> get('user', 0);
+
+            if (!$app['security']->isGranted('ROLE_ADMIN')) {
+                if ((int)$user !== (int)$idLoggedUser) {
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger',
+                            'content' => 'This is not your ad - you can not delete it\'s photo.'
+                        )
+                    );
+                    return $app['twig']->render(
+                        'errors/403.twig'
+                    );
+                }
+            }
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in getting user';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in getting user'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
+
+
+        try {
+            $data = array();
+            $form = $app['form.factory']
+                ->createBuilder(new DeleteForm(), $ad)->getForm();
+            $form->handleRequest($request);
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong in creating form';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong in creating form'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
+        
+        if ($form->isValid()) {
+            if ($form->get('No')->isClicked()) {
+                return $app->redirect(
+                    $app['url_generator']->generate(
+                        '/'
+                    ),
+                    301
+                );
+            } else {
+                try {
+                    $photosModel = new PhotosModel($app);
+                    $photo = $photosModel -> getPhoto($id);
+                    $photosModel -> deletePhoto($id);
+
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success',
+                            'content' => 'Photo has been deleted.'
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate(
+                            '/ads/view',
+                            array('id'=> $adId)
+                        ),
+                        301
+                    );
+                } catch (\Exception $e) {
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger',
+                            'content' => 'Photo not found'
+                        )
+                    );
+                    return $app['twig']->render('404.twig');
+                }
+            }
+        }
+        return $app['twig']->render(
+            '/ads/delete.twig',
+            array(
+                'form' => $form->createView(),
+                $data
+            )
+        );
+
     }
 }

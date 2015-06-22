@@ -268,6 +268,7 @@ class UsersModel
      * Add user's phone number
      *
      * @param array $data Form data
+     * @param integer $id Record Id
      * @access public
      * @retun mixed Result
      */
@@ -339,11 +340,11 @@ class UsersModel
      * @access public
      * @retun mixed Result
      */
-    // public function deletePhone($id)
-    // {
-        // $sql = 'DELETE FROM so_details WHERE user_id = ?';
-        // $this->db->executeQuery($sql, array((int) $id));
-    // }
+    public function deletePhone($id)
+    {
+        $sql = 'DELETE FROM so_details WHERE user_id = ?';
+        $this->db->executeQuery($sql, array((int) $id));
+    }
 
     /**
      * Get user by id
@@ -559,6 +560,7 @@ class UsersModel
      *
      * @access public
      * @param integer $limit Number of records on single page
+     * @param integer $id Record Id
      * @return integer Result
      */
     public function countUsersAdsPages($limit, $id)

@@ -47,7 +47,7 @@
     
     <h4>
         {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ url('/user/panel') }}" title="Users index" class="label label-primary text-uppercase">Back to users list</a>
+            <a href="{{ url('/user/panel') }}" title="Users index" class="label label-primary text-uppercase">Back to panel</a>
         {% endif %}
         <a href="{{ url('/user/account') }}" title="Users account" class="label label-primary text-uppercase">Back to account</a>
     </h4>

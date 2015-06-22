@@ -28,6 +28,14 @@ class UsersController implements ControllerProviderInterface
      */
     protected $model;
 
+
+    /**
+     * Gets current user 
+     *
+     * @access protected
+     * @param Silex\Application $app Silex application
+     * return array Result
+     */
     protected function getCurrentUser($app)
     {
         $token = $app['security']->getToken();
@@ -50,22 +58,24 @@ class UsersController implements ControllerProviderInterface
     {
         $this->model = new UsersModel($app);
         $usersController = $app['controllers_factory'];
-        $usersController->get('/', array($this, 'accountAction'))
-            ->bind('/user/account');
+        $usersController->get('/', array($this, 'accountAction'));
+        $usersController->get('/{page}', array($this, 'accountAction'))
+                 ->value('page', 1)->bind('/user/account');
         $usersController->match('/add/', array($this, 'addAction'))
             ->bind('/user/add');
         $usersController->match('/delete/{id}', array($this, 'deleteAction'))
             ->bind('/user/delete');
         $usersController->get('/view/{id}', array($this, 'viewAction'))
             ->bind('/user/view');
-        $usersController->match('/edit/', array($this, 'passwordAction'))
+        $usersController->match('/edit/{id}', array($this, 'passwordAction'))
             ->bind('/user/edit');
         $usersController->match('/number/', array($this, 'numberAction'))
             ->bind('/user/number');
          $usersController->match('/role/{id}', array($this, 'roleAction'))
             ->bind('/user/role');
-        $usersController->match('/panel/', array($this, 'indexAction'))
-            ->bind('/user/panel');
+        $usersController->match('/panel/', array($this, 'indexAction'));
+        $usersController->get('/panel/{page}', array($this, 'indexAction'))
+                         ->value('page', 1)->bind('/user/panel');
 
         return $usersController;
     }
@@ -74,6 +84,7 @@ class UsersController implements ControllerProviderInterface
      * View list of users
      *
      * @param Application $app
+     * @param  Symfony\Component\HttpFoundation\Request $request Request object
      *
      * @access public
      * @return mixed generates page
@@ -566,9 +577,9 @@ class UsersController implements ControllerProviderInterface
                                     'min' => 10,
                                     'max' => 12,
                                     'minMessage' =>
-                                        'Use exactelty 10 numbers',
+                                        'Use exactelty 10 numbers and not more than 2 spaces',
                                     'maxMessage' =>
-                                        'Use exactelty 10 numbers',
+                                        'Use exactelty 10 numbers and not more than 2 spaces',
                                 )
                             ),
                             new Assert\Regex(
@@ -815,6 +826,13 @@ class UsersController implements ControllerProviderInterface
                 $id = (int) $request->get('id', 0);
             } else {
                 $id = $idLoggedUser;
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger',
+                        'content' => 'It is your account you are deleting.'
+                    )
+                );
             }
 
             $user = $usersModel->getUser($id);
@@ -1176,6 +1194,7 @@ class UsersController implements ControllerProviderInterface
      *
      * @access public
      * @param Application $app application object
+     * @param  Symfony\Component\HttpFoundation\Request $request Request object
      * @return mixed Generate pages
      */
     public function accountAction(Application $app, Request $request)
