@@ -55,7 +55,6 @@ class CategoryForm extends AbstractType
                 'attr' => array(
                      'placeholder' => 'Name',
                 ),
-                // 'label' => false,
                 'constraints' => array(
                     new Assert\NotBlank(), new Assert\Length(
                         array(
@@ -73,7 +72,6 @@ class CategoryForm extends AbstractType
                 'attr' => array(
                      'placeholder' => 'Description',
                 ),
-                // 'label' => false,
                 'constraints' => array(
                     new Assert\NotBlank(), new Assert\Length(
                         array(

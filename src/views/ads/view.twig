@@ -35,7 +35,7 @@
                                     <a href="{{ url('/photos/', {'id': ad.id}) }}" title="photo upload"  class="btn btn-default btn-lg">Change photo</a><br/>
                                     <a href="{{ url('/photos/delete', {'photo': photo.id, 'id': ad.id, 'user':ad.user_id}) }}" title="Delete photo" class="btn btn-default btn-lg marginT">Delete photo</a>
                                 {% elseif is_granted('ROLE_ADMIN')%}
-                                    <a href="{{ url('/photos/delete', {'id': ad.id, 'user':ad.user_id}) }}" title="Delete photo" class="btn btn-default btn-lg">Delete photo</a>
+                                    <a href="{{ url('/photos/delete', {'photo': photo.id, 'id': ad.id, 'user':ad.user_id}) }}" title="Delete photo" class="btn btn-default btn-lg">Delete photo</a>
                                 {% endif %}
                             {% endif %}
                         </td>

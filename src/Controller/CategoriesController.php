@@ -20,6 +20,12 @@ use Model\UsersModel;
 use Form\CategoryForm;
 use Form\DeleteForm;
 
+/**
+ * Class CategoriesController.
+ *
+ * @package Controller
+ * @implements ControllerProviderInterface
+ */
 class CategoriesController implements ControllerProviderInterface
 {
     /**

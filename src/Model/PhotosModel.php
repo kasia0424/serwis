@@ -82,7 +82,7 @@ class PhotosModel
     public function createName($name)
     {
         $newName = '';
-        $ext = pathinfo($name, PATHINFO_EXTENSION); //losowy ci¹g z nazwy i rozszerzenia
+        $ext = pathinfo($name, PATHINFO_EXTENSION);
         $newName = $this->randomString(32) . '.' . $ext;
 
         while (!$this->isUniqueName($newName)) {
@@ -100,7 +100,7 @@ class PhotosModel
      * @param int $length length of string
      * @retun $string Result
      */
-    protected function randomString($length) //tworzenie ci¹gu liter i cyfr o zadanej d³
+    protected function randomString($length)
     {
         $string = '';
         $keys = array_merge(range(0, 9), range('a', 'z'));
@@ -118,7 +118,7 @@ class PhotosModel
      * @param $name string name
      * @retun boolean Result
      */
-    protected function isUniqueName($name) //zwraca true jak ci¹g unikalny
+    protected function isUniqueName($name)
     {
         $sql = 'SELECT COUNT(*) AS files_count FROM so_photos WHERE name = ?';
         $result = $this->_db->fetchAssoc($sql, array($name));

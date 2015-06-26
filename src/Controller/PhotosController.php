@@ -19,6 +19,12 @@ use Model\UsersModel;
 use Form\FilesForm;
 use Form\DeleteForm;
 
+/**
+ * Class PhotosController.
+ *
+ * @package Controller
+ * @implements ControllerProviderInterface
+ */
 class PhotosController implements ControllerProviderInterface
 {
     /**
@@ -262,7 +268,7 @@ class PhotosController implements ControllerProviderInterface
             }
         }
         return $app['twig']->render(
-            '/ads/delete.twig',
+            '/photos/delete.twig',
             array(
                 'form' => $form->createView(),
                 $data

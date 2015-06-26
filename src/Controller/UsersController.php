@@ -18,6 +18,12 @@ use Model\UsersModel;
 use Model\AdsModel;
 use Form\DeleteForm;
 
+/**
+ * Class UsersController.
+ *
+ * @package Controller
+ * @implements ControllerProviderInterface
+ */
 class UsersController implements ControllerProviderInterface
 {
     /**
@@ -30,7 +36,7 @@ class UsersController implements ControllerProviderInterface
 
 
     /**
-     * Gets current user 
+     * Gets current user
      *
      * @access protected
      * @param Silex\Application $app Silex application

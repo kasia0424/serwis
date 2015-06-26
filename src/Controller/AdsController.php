@@ -21,6 +21,12 @@ use Model\UsersModel;
 use Model\PhotosModel;
 use Form\DeleteForm;
 
+/**
+ * Class AdsController.
+ *
+ * @package Controller
+ * @implements ControllerProviderInterface
+ */
 class AdsController implements ControllerProviderInterface
 {
     /**

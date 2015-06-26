@@ -88,7 +88,6 @@ class AdsModel
      */
     public function adPhoto($id)
     {
-        var_dump("ajdik".$id);
         if ($id != '') {
             $query = 'SELECT id FROM so_photos
                 ORDER BY id DESC LIMIT 1';
