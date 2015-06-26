@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Model\UsersModel;
 use Model\AdsModel;
 use Form\DeleteForm;
+use Form\UserForm;
 
 /**
  * Class UsersController.
@@ -65,8 +66,6 @@ class UsersController implements ControllerProviderInterface
         $this->model = new UsersModel($app);
         $usersController = $app['controllers_factory'];
         $usersController->get('/', array($this, 'accountAction'));
-        $usersController->get('/{page}', array($this, 'accountAction'))
-                 ->value('page', 1)->bind('/user/account');
         $usersController->match('/add/', array($this, 'addAction'))
             ->bind('/user/add');
         $usersController->match('/delete/{id}', array($this, 'deleteAction'))
@@ -81,8 +80,10 @@ class UsersController implements ControllerProviderInterface
             ->bind('/user/role');
         $usersController->match('/panel/', array($this, 'indexAction'));
         $usersController->get('/panel/{page}', array($this, 'indexAction'))
-                         ->value('page', 1)->bind('/user/panel');
-
+                ->value('page', 1)->bind('/user/panel');
+        $usersController->get('/{page}', array($this, 'accountAction'))
+                ->value('page', 1)->bind('/user/account');
+        
         return $usersController;
     }
 
@@ -151,78 +152,10 @@ class UsersController implements ControllerProviderInterface
 
 
         try {
-            $form = $app['form.factory']->createBuilder('form', $data)
-                ->add(
-                    'login',
-                    'text',
-                    array(
-                        'constraints' => array(
-                            new Assert\NotBlank(), new Assert\Length(
-                                array(
-                                    'min' => 5,
-                                    'minMessage' =>
-                                        'Use more than 4 characters',
-                                )
-                            )
-                        )
-                    )
-                )
-                ->add(
-                    'password',
-                    'repeated',
-                    array(
-                        'type' => 'password',
-                        'invalid_message' => 'The password fields must match.',
-                        'options' => array('attr' => array('class' => 'password-field')),
-                        'required' => true,
-                        'first_options'  => array(
-                            'label' => 'Password',
-                            'attr' => array('placeholder' => 'More than 4 characters')
-                        ),
-                        'second_options' => array(
-                            'label' => 'Repeat password',
-                            'attr' => array('placeholder' => 'More than 4 characters')
-                        ),
-                        'constraints' => array(
-                            new Assert\NotBlank(),
-                            new Assert\Length(
-                                array(
-                                    'min' => 5,
-                                    'minMessage' =>
-                                        'Use more than 4 characters',
-                                )
-                            )
-                        )
-                    )
-                )
-                ->add(
-                    'phone_number',
-                    'text',
-                    array(
-                        'attr' => array(
-                             'placeholder' => 'Format: xxx xxx xxxx',
-                        ),
-                        'constraints' => array(
-                            new Assert\NotBlank(), new Assert\Length(
-                                array(
-                                    'min' => 10,
-                                    'max' => 12,
-                                    'minMessage' =>
-                                        'Use exactelty 10 numbers',
-                                    'maxMessage' =>
-                                        'Use exactelty 10 numbers',
-                                )
-                            ),
-                            new Assert\Regex(
-                                array(
-                                    'pattern' => "/^\(?([0-9]{3})\)?([ .-]?)([0-9]{3})([ .-]?)([0-9]{4})$/",
-                                    'message' => 'Use only numbers - format: xxx xxx xxxx',
-                                )
-                            )
-                        )
-                    )
-                )
-                ->getForm();
+            $form = $app['form.factory']
+                ->createBuilder(new UserForm(), $data)->getForm();
+            $form
+                ->remove('id');
 
             $form->handleRequest($request);
         } catch (\Exception $e) {
@@ -393,46 +326,10 @@ class UsersController implements ControllerProviderInterface
             );
 
         if (count($user)) {
-            $form = $app['form.factory']->createBuilder('form', $data)
-                ->add(
-                    'login',
-                    'text',
-                    array(
-                        'constraints' => array(
-                            new Assert\NotBlank(), new Assert\Length(
-                                array(
-                                    'min' => 5,
-                                    'minMessage' =>
-                                        'Use more than 4 characters',
-                                )
-                            )
-                        )
-                    )
-                )
-                ->add(
-                    'password',
-                    'repeated',
-                    array(
-                        'type' => 'password',
-                        'invalid_message' => 'The password fields must match.',
-                        'options' => array('attr' => array('class' => 'password-field')),
-                        'required' => true,
-                        'first_options'  => array('label' => 'Password'),
-                        'second_options' => array('label' => 'Repeat password'),
-                        'constraints' => array(
-                            new Assert\NotBlank(),
-                            new Assert\Length(
-                                array(
-                                    'min' => 5,
-                                    'minMessage' =>
-                                        'Use more than 4 characters',
-                                )
-                            )
-                        )
-                    )
-                )
-                ->add('save', 'submit')
-                ->getForm();
+            $form = $app['form.factory']
+                ->createBuilder(new UserForm(), $data)->getForm();
+            $form
+                ->add('save', 'submit');
 
             $form->handleRequest($request);
 
@@ -569,36 +466,12 @@ class UsersController implements ControllerProviderInterface
         }
 
         if (count($user)) {
-            $form = $app['form.factory']->createBuilder('form', $data)
-                ->add(
-                    'phone_number',
-                    'text',
-                    array(
-                        'attr' => array(
-                             'placeholder' => 'Format: xxx xxx xxxx',
-                        ),
-                        'constraints' => array(
-                            new Assert\NotBlank(), new Assert\Length(
-                                array(
-                                    'min' => 10,
-                                    'max' => 12,
-                                    'minMessage' =>
-                                        'Use exactelty 10 numbers and not more than 2 spaces',
-                                    'maxMessage' =>
-                                        'Use exactelty 10 numbers and not more than 2 spaces',
-                                )
-                            ),
-                            new Assert\Regex(
-                                array(
-                                    'pattern' => "/^\(?([0-9]{3})\)?([ .-]?)([0-9]{3})([ .-]?)([0-9]{4})$/",
-                                    'message' => 'Use only numbers - format: xxx xxx xxxx',
-                                )
-                            )
-                        )
-                    )
-                )
-                ->add('save', 'submit')
-                ->getForm();
+            $form = $app['form.factory']
+                ->createBuilder(new UserForm(), $data)->getForm();
+            $form
+                ->remove('login')
+                ->remove('password')
+                ->add('save', 'submit');
 
             $form->handleRequest($request);
 
@@ -968,6 +841,7 @@ class UsersController implements ControllerProviderInterface
         try {
             $usersModel = new UsersModel($app);
             $idLoggedUser = $usersModel->getIdCurrentUser($app);
+            
 
             if ($app['security']->isGranted('ROLE_ADMIN')) {
                 $usersModel = new UsersModel($app);
@@ -1108,7 +982,7 @@ class UsersController implements ControllerProviderInterface
                                 'message',
                                 array(
                                     'type' => 'success',
-                                    'content' => 'Password is changed'
+                                    'content' => 'Password is changed. Next time log-in with a new one.'
                                 )
                             );
                             return $app->redirect(

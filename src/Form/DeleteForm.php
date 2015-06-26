@@ -3,7 +3,7 @@
  * Delete form.
  *
  * @author Wanda Sipel
- * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/categories/
+ * @link http://wierzba.wzks.uj.edu.pl/~12_sipel/serwis/web/
  * @copyright 2015 EPI
  */
 

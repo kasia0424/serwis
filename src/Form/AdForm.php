@@ -12,7 +12,7 @@ namespace Form;
 use Silex\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-//use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Model\CategoriesModel;
@@ -41,9 +41,6 @@ class AdForm extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // $categoriesModel = new CategoriesModel($app);
-        // $choiceCategory = $categoriesModel->getCategoriesList();
-
         return  $builder
             ->add(
                 'id',
@@ -68,15 +65,14 @@ class AdForm extends AbstractType
                             array(
                                 'min' => 3,
                                 'max' => 30,
-                                'minMessage' =>'Use more than 2 characters',
-                                'maxMessage' =>'Use less than 30 characters',
+                                'minMessage' =>'Use more than 2 characters in your title',
+                                'maxMessage' =>'Use less than 30 characters in your title',
 
                             )
                         ),
                         new Assert\Regex(
                             array(
-                                'pattern' => "/[a-zA-z]{3,}/",
-                                //'match' =>   true,
+                                'pattern' => "/([a-zA-z\s]*){3,}/",
                                 'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
                             )
                         )
@@ -95,38 +91,20 @@ class AdForm extends AbstractType
                         new Assert\NotBlank(),new Assert\Length(
                             array(
                                 'min' => 5,
-                                'minMessage' =>'Use more than 5 characters',
+                                'minMessage' =>'Use more than 4 characters in your ad content
+                                (white spaces are removed from the end)',
 
                             )
                         ),
                         new Assert\Regex(
                             array(
-                                'pattern' => "/[a-zA-z]{3,}/",
-                                'message' => 'It\'s your ad - use at least 3 letters in it.',
+                                'pattern' => "/[a-zA-z\s]{3,}/",
+                                'message' => 'It\'s your ad content - use at least 3 letters in it.',
                             )
                         )
                     )
                 )
-            )
-            ->add(
-                'category_id',
-                'choice',
-                array(
-                    'placeholder' => 'Choose category',
-                    'choices' => $options['data']['choiceCategory']
-                )
             );
-            // ->add(
-                // 'user_id',
-                // 'hidden',
-                // array(
-                    // 'constraints' => array(
-                        // new Assert\NotBlank(),
-                        // new Assert\Type(array('type' => 'digit'))
-                    // )
-                // )
-            // );
-
     }
 
     /**

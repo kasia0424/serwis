@@ -27,7 +27,7 @@
                 <td>{{ number }}</td>
                 {% if user.id == logged %}
                     <td>
-                        <a href="{{ url('/user/edit') }}" title="Edit password" class="btn btn-default btn-lg">Edit password</a>
+                        <a href="{{ url('/user/edit', {'id': user.id}) }}" title="Edit password" class="btn btn-default btn-lg">Edit password</a>
                     </td>
                     <td>
                         {% if number == null %}

@@ -165,61 +165,9 @@ class AdsController implements ControllerProviderInterface
             );
 
             $form = $app['form.factory']
-                ->createBuilder(new DeleteForm(), $data)->getForm();
-
-            $form = $app['form.factory']->createBuilder('form', $data)
-                ->add(
-                    'title',
-                    'text',
-                    array(
-                        'attr' => array(
-                             'placeholder' => 'Title',
-                        ),
-                        'label' => false,
-                        'constraints' => array(
-                            new Assert\NotBlank(), new Assert\Length(
-                                array(
-                                    'min' => 3,
-                                    'max' => 30,
-                                    'minMessage' =>'Use more than 2 characters in your title',
-                                    'maxMessage' =>'Use less than 30 characters in your title',
-
-                                )
-                            ),
-                            new Assert\Regex(
-                                array(
-                                    'pattern' => "/[a-zA-z]{3,}/",
-                                    'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
-                                )
-                            )
-                        )
-                    )
-                )
-                ->add(
-                    'text',
-                    'textarea',
-                    array(
-                        'attr' => array(
-                             'placeholder' => 'Content of your ad',
-                        ),
-                        'label' => false,
-                        'constraints' => array(
-                            new Assert\NotBlank(),new Assert\Length(
-                                array(
-                                    'min' => 5,
-                                    'minMessage' =>'Use more than 4 characters in your ad content',
-
-                                )
-                            ),
-                            new Assert\Regex(
-                                array(
-                                    'pattern' => "/[a-zA-z]{3,}/",
-                                    'message' => 'It\'s your ad content - use at least 3 letters in it.',
-                                )
-                            )
-                        )
-                    )
-                )
+                ->createBuilder(new AdForm(), $data)->getForm();
+            $form
+                ->remove('id')
                 ->add(
                     'category_id',
                     'choice',
@@ -227,8 +175,7 @@ class AdsController implements ControllerProviderInterface
                         'placeholder' => 'Choose category',
                         'choices' => $choiceCategory
                     )
-                )
-                ->getForm();
+                );
 
         } catch (\Exception $e) {
             $errors[] = 'Something went wrong in creating form';
@@ -361,70 +308,16 @@ class AdsController implements ControllerProviderInterface
 
 
         try {
-            $form = $app['form.factory']->createBuilder(
-                'form',
-                $data
-            )
-                ->add(
-                    'category_id',
-                    'choice',
-                    array(
-                        'placeholder' => 'Choose category',
-                        'label' => 'Category',
-                        'choices' => $choiceCategory
-                    )
+            $form = $app['form.factory']
+                ->createBuilder(new AdForm(), $data)->getForm();
+            $form->add(
+                'category_id',
+                'choice',
+                array(
+                    'placeholder' => 'Choose category',
+                    'choices' => $choiceCategory
                 )
-                ->add(
-                    'title',
-                    'text',
-                    array(
-                        'attr' => array(
-                             'placeholder' => 'Title',
-                        ),
-                        'constraints' => array(
-                            new Assert\NotBlank(), new Assert\Length(
-                                array(
-                                    'min' => 3,
-                                    'max' => 30,
-                                    'minMessage' =>'Use more than 2 characters',
-                                    'maxMessage' =>'Use less than 30 characters',
-
-                                )
-                            ),
-                            new Assert\Regex(
-                                array(
-                                    'pattern' => "/[a-zA-z]{3,}/",
-                                    'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
-                                )
-                            )
-                        )
-                    )
-                )
-                ->add(
-                    'text',
-                    'textarea',
-                    array(
-                        'attr' => array(
-                             'placeholder' => 'Content of your ad',
-                        ),
-                        'constraints' => array(
-                            new Assert\NotBlank(),new Assert\Length(
-                                array(
-                                    'min' => 5,
-                                    'minMessage' =>'Use more than 4 characters',
-
-                                )
-                            ),
-                            new Assert\Regex(
-                                array(
-                                    'pattern' => "/[a-zA-z]{3,}/",
-                                    'message' => 'It\'s your ad - use at least 3 letters in it.',
-                                )
-                            )
-                        )
-                    )
-                )
-                ->getForm();
+            );
 
             $form->handleRequest($request);
 
