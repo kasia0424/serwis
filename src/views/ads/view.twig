@@ -28,7 +28,9 @@
                     <tr>
                         <td>
                             {% if photo == null %}
-                                <a href="{{ url('/photos/upload', {'id': ad.id}) }}" title="Add photo" class="btn btn-default btn-lg active" role="button">Add photo</a>
+                                {% if is_granted('ROLE_USER') and loggedUser == ad.user_id %}
+                                    <a href="{{ url('/photos/upload', {'id': ad.id}) }}" title="Add photo" class="btn btn-default btn-lg active" role="button">Add photo</a>
+                                {% endif %}
                             {% else %}
                                 <img src="{{ app.request.basepath }}/media/{{ photo.name }}"  height="200" width="200" alt="obrazek ogłoszenia" class="img-rounded"><br/><br/>
                                 {% if is_granted('ROLE_USER') and loggedUser == ad.user_id %}

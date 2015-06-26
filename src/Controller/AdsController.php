@@ -519,7 +519,6 @@ class AdsController implements ControllerProviderInterface
             );
         }
 
-        //
         try {
             $data = array();
             $form = $app['form.factory']

@@ -37,13 +37,14 @@ class PhotosController implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $photosController = $app['controllers_factory'];
-        $photosController->match('/', array($this, 'upload'))
-            ->bind('/photos/');
+        $photosController->match('/', array($this, 'upload'));
         $photosController->match('/upload', array($this, 'upload'));
         $photosController->match('/delete/{id}', array($this, 'delete'))
             ->bind('/photos/delete');
         $photosController->get('/upload/{id}', array($this, 'upload'))
             ->value('id', 1)->bind('/photos/upload');
+        $photosController->get('/{id}', array($this, 'upload'))
+            ->bind('/photos/');
         // $photosController->get('/delete/{photo}/{id}/{user}', array($this, 'delete'))
             // ->value('id', 1)->bind('/photos/delete');
         return $photosController;
@@ -62,10 +63,7 @@ class PhotosController implements ControllerProviderInterface
         $adId =(int)$request->get('id', 0);
 
         $adsModel = new AdsModel($app);
-        $ad = $adsModel->getAd($adId);
-
         $usersModel = new UsersModel($app);
-        $idLoggedUser = $usersModel->getIdCurrentUser($app);
 
         $form = $app['form.factory']
             ->createBuilder(new FilesForm(), array('ad_id'=>$adId))->getForm();
@@ -87,12 +85,28 @@ class PhotosController implements ControllerProviderInterface
                     $files['image']->move($path, $newFilename);
 
                     $adId = $data['ad_id'];
-                    $photo = $photosModel->getPhoto($adId);
-                    
-                    if ($photo == null) {
-                        $photosModel->saveFile($newFilename, $adId);
+                    $ad = $adsModel->getAd($adId);
+                    $idLoggedUser = $usersModel->getIdCurrentUser($app);
+                    if ((int)$ad['user_id'] == (int)$idLoggedUser) {
+                        $photo = $photosModel->getPhoto($adId);
+                        
+                        if ($photo == null) {
+                            $photosModel->saveFile($newFilename, $adId);
+                        } else {
+                            $photosModel->updateFile($newFilename, $data);
+                        }
+                        $flag= true;
                     } else {
-                        $photosModel->updateFile($newFilename, $data);
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'danger',
+                                'content' => 'This is not your ad - you can not add photo to it.'
+                            )
+                        );
+                        return $app['twig']->render(
+                            'errors/403.twig'
+                        );
                     }
 
                     $app['session']->getFlashBag()->add(
