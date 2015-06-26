@@ -897,8 +897,6 @@ class UsersController implements ControllerProviderInterface
             ->add('Yes', 'submit')
             ->add('No', 'submit')
             ->getForm();
-        // $form = $app['form.factory']
-            // ->createBuilder(new DeleteForm(), $data)->getForm();
 
         $form->handleRequest($request);
 
@@ -912,20 +910,6 @@ class UsersController implements ControllerProviderInterface
                 );
             } else {
                 try {
-                    // $delUser = $usersModel->getUser($id);
-                    // if($delUser['role'] == 'ROLE_ADMIN'){
-                        // $app['session']->getFlashBag()->add(
-                            // 'message',
-                            // array(
-                                // 'type' => 'danger',
-                                // 'content' => 'You can not delete admin account. Pass it to someone else.'
-                            // )
-                        // );
-                        // return $app['twig']->render(
-                            // 'errors/403.twig'
-                        // );
-                    // }
-
                     $adsModel = new AdsModel($app);
                     $adsModel->deleteUsersAds($id);
                     $usersModel->deletePhone($id);

@@ -12,7 +12,7 @@ namespace Controller;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints as Assert; //- jak jest formularz w osobnym pliku to bez tego!
+use Symfony\Component\Validator\Constraints as Assert;
 
 use Model\AdsModel;
 use Form\AdForm;
@@ -39,9 +39,6 @@ class AdsController implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $adsController = $app['controllers_factory'];
-        $adsController->get('/', array($this, 'indexAction'));
-        $adsController->get('/{page}', array($this, 'indexAction'))
-                         ->value('page', 1)->bind('/ads/');
         $adsController->match('/add', array($this, 'addAction'))
             ->bind('/ads/add');
         $adsController->match('/edit/{id}', array($this, 'editAction'))
@@ -50,6 +47,9 @@ class AdsController implements ControllerProviderInterface
             ->bind('/ads/delete');
         $adsController->get('/view/{id}', array($this, 'viewAction'))
             ->bind('/ads/view');
+        $adsController->get('/', array($this, 'indexAction'));
+        $adsController->get('/{page}', array($this, 'indexAction'))
+                         ->value('page', 1)->bind('/ads/');
         return $adsController;
     }
 
@@ -228,21 +228,8 @@ class AdsController implements ControllerProviderInterface
                         'choices' => $choiceCategory
                     )
                 )
-                ->add(
-                    'file',
-                    'file',
-                    array(
-                        'label' => 'Choose photo',
-                        'required' => false,
-                        'constraints' => array(new Assert\Image())
-                    )
-                )
-                // ->add('Upload', 'submit')
                 ->getForm();
-            // $form = $app['form.factory']
-                // ->createBuilder(new AdForm(), array('choiceCategory' =>$choiceCategory))->getForm();
-            // $form->remove('id');
-            //$form->remove('user_id');
+
         } catch (\Exception $e) {
             $errors[] = 'Something went wrong in creating form';
 
@@ -261,36 +248,10 @@ class AdsController implements ControllerProviderInterface
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            //var_dump($data);
             try {
-                //file
-                // if ($form->get('Upload')->isClicked()) {
-                    // $files = $request->files->get($form->getName());
-                    // var_dump($files);
-
-                    // if ($files != null) {
-                        // $path = dirname(dirname(dirname(__FILE__))).'/web/media';
-                        // $photosModel = new PhotosModel($app);
-                        // $originalFilename = $files['image']->getClientOriginalName();
-                        // $newFilename = $photosModel->createName($originalFilename);
-                        // $files['image']->move($path, $newFilename);
-                        
-                        // $last = $adsModel->getLastAd();
-                        // //var_dump($last);die();
-
-                    // //$adId = $data['ad_id'];
-                    
-                        // $photosModel->saveFile($newFilename, $last['id']);
-                    // }
-                // }
-                //
-
-
                 $data = $form->getData();
                 $adsModel = new AdsModel($app);
                 $adsModel->saveAd($data);
-
-
 
                 $app['session']->getFlashBag()->add(
                     'message',
@@ -433,7 +394,6 @@ class AdsController implements ControllerProviderInterface
                             new Assert\Regex(
                                 array(
                                     'pattern' => "/[a-zA-z]{3,}/",
-                                    //'match' =>   true,
                                     'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
                                 )
                             )
@@ -564,17 +524,6 @@ class AdsController implements ControllerProviderInterface
             $data = array();
             $form = $app['form.factory']
                 ->createBuilder(new DeleteForm(), $ad)->getForm();
-            // $form = $app['form.factory']->createBuilder('form', $data)
-                // ->add(
-                    // 'id',
-                    // 'hidden',
-                    // array(
-                        // 'data' => $id,
-                    // )
-                // )
-                // ->add('Yes', 'submit')
-                // ->add('No', 'submit')
-                // ->getForm();
 
             $form->handleRequest($request);
         } catch (\Exception $e) {

@@ -39,10 +39,13 @@ class PhotosController implements ControllerProviderInterface
         $photosController = $app['controllers_factory'];
         $photosController->match('/', array($this, 'upload'))
             ->bind('/photos/');
-        $photosController->match('/upload', array($this, 'upload'))
-            ->bind('/photos/upload');
+        $photosController->match('/upload', array($this, 'upload'));
         $photosController->match('/delete/{id}', array($this, 'delete'))
             ->bind('/photos/delete');
+        $photosController->get('/upload/{id}', array($this, 'upload'))
+            ->value('id', 1)->bind('/photos/upload');
+        // $photosController->get('/delete/{photo}/{id}/{user}', array($this, 'delete'))
+            // ->value('id', 1)->bind('/photos/delete');
         return $photosController;
     }
 
@@ -63,25 +66,6 @@ class PhotosController implements ControllerProviderInterface
 
         $usersModel = new UsersModel($app);
         $idLoggedUser = $usersModel->getIdCurrentUser($app);
-
-        $flag = false;
-
-        if ($flag == false) {
-        // if (!$app['security']->isGranted('ROLE_ADMIN')) {
-            // if ((int)$ad['user_id'] !== (int)$idLoggedUser) {
-                // $app['session']->getFlashBag()->add(
-                    // 'message',
-                    // array(
-                        // 'type' => 'danger',
-                        // 'content' => 'This is not your ad - you can not adddd photo to it.'
-                    // )
-                // );
-                // return $app['twig']->render(
-                    // 'errors/403.twig'
-                // );
-            // }
-        // }
-        }
 
         $form = $app['form.factory']
             ->createBuilder(new FilesForm(), array('ad_id'=>$adId))->getForm();
@@ -138,7 +122,6 @@ class PhotosController implements ControllerProviderInterface
                 }
 
             } else {
-                // var_dump($form);
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
@@ -212,6 +195,7 @@ class PhotosController implements ControllerProviderInterface
             $form = $app['form.factory']
                 ->createBuilder(new DeleteForm(), $ad)->getForm();
             $form->handleRequest($request);
+
         } catch (\Exception $e) {
             $errors[] = 'Something went wrong in creating form';
 
@@ -248,6 +232,7 @@ class PhotosController implements ControllerProviderInterface
                             'content' => 'Photo has been deleted.'
                         )
                     );
+
                     return $app->redirect(
                         $app['url_generator']->generate(
                             '/ads/view',

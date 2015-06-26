@@ -38,8 +38,6 @@ class CategoriesController implements ControllerProviderInterface
     {
         $categoriesController = $app['controllers_factory'];
         $categoriesController->get('/', array($this, 'indexAction'));
-        $categoriesController->get('/{page}', array($this, 'indexAction'))
-                     ->value('page', 1)->bind('/categories/');
         $categoriesController->match('/add', array($this, 'addAction'))
             ->bind('/categories/add');
         $categoriesController->match('/edit/{id}', array($this, 'editAction'))
@@ -48,7 +46,9 @@ class CategoriesController implements ControllerProviderInterface
             ->bind('/categories/delete');
         $categoriesController->get('/view/{id}', array($this, 'viewAction'));
         $categoriesController->get('/view/{id}/{page}', array($this, 'viewAction'))
-                     ->value('page', 1)->bind('/categories/view');
+                ->value('page', 1)->bind('/categories/view');
+        $categoriesController->get('/{page}', array($this, 'indexAction'))
+                ->value('page', 1)->bind('/categories/');
         return $categoriesController;
     }
 
@@ -104,53 +104,9 @@ class CategoriesController implements ControllerProviderInterface
     public function addAction(Application $app, Request $request)
     {
         try {
-            // $data = array(
-                // 'name' => 'Name of category',
-                // 'description' => 'Describe category in few words',
-            // );
             $form = $app['form.factory']
                 ->createBuilder(new CategoryForm(), $data)->getForm();
             $form->remove('id');
-
-
-            // $form = $app['form.factory']->createBuilder('form', $data)
-                // ->add(
-                    // 'name',
-                    // 'text',
-                    // array(
-                        // 'attr' => array(
-                             // 'placeholder' => 'Name',
-                        // ),
-                        // 'label' => false,
-                        // 'constraints' => array(
-                            // new Assert\NotBlank(), new Assert\Length(
-                                // array(
-                                    // 'min' => 3,
-                                    // 'minMessage' =>'Use more than 2 characters',
-                                // )
-                            // )
-                        // )
-                    // )
-                // )
-                // ->add(
-                    // 'description',
-                    // 'textarea',
-                    // array(
-                        // 'attr' => array(
-                             // 'placeholder' => 'Description',
-                        // ),
-                        // 'label' => false,
-                        // 'constraints' => array(
-                            // new Assert\NotBlank(), new Assert\Length(
-                                // array(
-                                    // 'min' => 3,
-                                    // 'minMessage' =>'Use more than 2 characters',
-                                // )
-                            // )
-                        // )
-                    // )
-                // )
-                // ->getForm();
 
             $form->handleRequest($request);
 
@@ -236,35 +192,6 @@ class CategoriesController implements ControllerProviderInterface
                     new CategoryForm(),
                     $category
                 )->getForm();
-            // $form = $app['form.factory']->createBuilder('form', $category)
-                // ->add(
-                    // 'id', 'hidden',
-                    // array(
-                        // 'constraints' => array(
-                            // new Assert\NotBlank(),
-                            // new Assert\Type(array('type' => 'digit'))
-                        // )
-                    // )
-                // )
-                // ->add(
-                    // 'title', 'text',
-                    // array(
-                        // 'constraints' => array(
-                            // new Assert\NotBlank(),
-                            // new Assert\Length(array('min' => 5))
-                        // )
-                    // )
-                // )
-                // ->add(
-                    // 'text', 'text',
-                    // array(
-                        // 'constraints' => array(
-                            // new Assert\NotBlank(),
-                            // new Assert\Length(array('min' => 5))
-                        // )
-                    // )
-                // )
-                // ->getForm();
             $form->handleRequest($request);
 
             if ($form->isValid()) {
@@ -372,17 +299,6 @@ class CategoriesController implements ControllerProviderInterface
                 'errors/404.twig'
             );
         }
-        // $form = $app['form.factory']->createBuilder('form', $data)
-            // ->add(
-                // 'id',
-                // 'hidden',
-                // array(
-                    // 'data' => $id,
-                // )
-            // )
-            // ->add('Yes', 'submit')
-            // ->add('No', 'submit')
-            // ->getForm();
 
         $form->handleRequest($request);
         
@@ -390,8 +306,7 @@ class CategoriesController implements ControllerProviderInterface
             if ($form->get('No')->isClicked()) {
                 return $app->redirect(
                     $app['url_generator']->generate(
-                        '/categories/'//view',
-                        // array('id'=> $id)
+                        '/categories/'
                     ),
                     301
                 );

@@ -5,13 +5,16 @@
 {% block content %}
 
     <div class="error">
+        <h1> Something went wrong</h1>
+        <p>Please try again</p>
+
         {% for flashMessage in app.session.getFlashBag.get('message') %}
             <div class="alert alert-{{ flashMessage.type }}">
                 {{ flashMessage.content }}
             </div>
         {% endfor %}
     </div>
-	
-	<p><a href="{{ url('/ads/') }}" title="Home">Back to the homepage.</a></p>
+    
+    <p><a href="{{ url('/ads/') }}" title="Home">Back to the homepage.</a></p>
 
 {% endblock %}
