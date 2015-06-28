@@ -46,8 +46,8 @@ class DeleteForm extends AbstractType
                 'data' => $id,
             )
         )
-        ->add('Yes', 'submit')
-        ->add('No', 'submit');
+        ->add('Tak', 'submit')
+        ->add('Nie', 'submit');
     }
 
     /**

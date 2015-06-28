@@ -57,7 +57,7 @@ class AdForm extends AbstractType
                 'text',
                 array(
                     'attr' => array(
-                         'placeholder' => 'Title',
+                         'placeholder' => 'Tytuł',
                     ),
                     'label' => false,
                     'constraints' => array(
@@ -65,15 +65,15 @@ class AdForm extends AbstractType
                             array(
                                 'min' => 3,
                                 'max' => 30,
-                                'minMessage' =>'Use more than 2 characters in your title',
-                                'maxMessage' =>'Use less than 30 characters in your title',
+                                'minMessage' =>'Użyj przynajmniej 3 znaków w tytule',
+                                'maxMessage' =>'Nie możesz użyć więcej niż 30 znaków w tytule',
 
                             )
                         ),
                         new Assert\Regex(
                             array(
                                 'pattern' => "/([a-zA-z\s]*){3,}/",
-                                'message' => 'It\'s your ad\'s title - use at least 3 letters in it.',
+                                'message' => 'To tytuł twojego ogłoszenia - uzyj przynajmniej 3 litery w nim.',
                             )
                         )
                     )
@@ -84,22 +84,22 @@ class AdForm extends AbstractType
                 'textarea',
                 array(
                     'attr' => array(
-                         'placeholder' => 'Content of your ad',
+                         'placeholder' => 'Treść ogłoszenia',
                     ),
                     'label' => false,
                     'constraints' => array(
                         new Assert\NotBlank(),new Assert\Length(
                             array(
                                 'min' => 5,
-                                'minMessage' =>'Use more than 4 characters in your ad content
-                                (white spaces are removed from the end)',
+                                'minMessage' =>'Użyj więcej niż 4 znaków w treści ogłoszenia
+                                (białe znaki z końca są usuwane)',
 
                             )
                         ),
                         new Assert\Regex(
                             array(
                                 'pattern' => "/[a-zA-z\s]{3,}/",
-                                'message' => 'It\'s your ad content - use at least 3 letters in it.',
+                                'message' => 'To treść twojego ogłoszenia - użyj przynajmniej 3 liter',
                             )
                         )
                     )

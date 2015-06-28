@@ -58,7 +58,7 @@ class UserForm extends AbstractType
                             array(
                                 'min' => 5,
                                 'minMessage' =>
-                                    'Use more than 4 characters',
+                                    'Użyj więcej niż 4 znaków',
                             )
                         )
                     )
@@ -69,16 +69,16 @@ class UserForm extends AbstractType
                 'repeated',
                 array(
                     'type' => 'password',
-                    'invalid_message' => 'The password fields must match.',
+                    'invalid_message' => 'Wprowadzone hasła muszą być takie same.',
                     'options' => array('attr' => array('class' => 'password-field')),
                     'required' => true,
                     'first_options'  => array(
-                        'label' => 'Password',
-                        'attr' => array('placeholder' => 'More than 4 characters')
+                        'label' => 'Hasło',
+                        'attr' => array('placeholder' => 'Użyj więcej niż 4 znaków')
                     ),
                     'second_options' => array(
-                        'label' => 'Repeat password',
-                        'attr' => array('placeholder' => 'More than 4 characters')
+                        'label' => 'Powtórz hasło',
+                        'attr' => array('placeholder' => 'Użyj więcej niż 4 znaków')
                     ),
                     'constraints' => array(
                         new Assert\NotBlank(),
@@ -86,7 +86,7 @@ class UserForm extends AbstractType
                             array(
                                 'min' => 5,
                                 'minMessage' =>
-                                    'Use more than 4 characters',
+                                    'Użyj więcej niż 4 znaków',
                             )
                         )
                     )
@@ -105,15 +105,15 @@ class UserForm extends AbstractType
                                 'min' => 10,
                                 'max' => 12,
                                 'minMessage' =>
-                                    'Use exactelty 10 numbers and not more than 2 spaces',
+                                    'Użyj dokładnie 10 cyfr i nie więcej niż 2 spacje',
                                 'maxMessage' =>
-                                    'Use exactelty 10 numbers and not more than 2 spaces',
+                                    'Użyj dokładnie 10 cyfr i nie więcej niż 2 spacje',
                             )
                         ),
                         new Assert\Regex(
                             array(
                                 'pattern' => "/^\(?([0-9]{3})\)?([ .-]?)([0-9]{3})([ .-]?)([0-9]{4})$/",
-                                'message' => 'Use only numbers - format: xxx xxx xxxx',
+                                'message' => 'Wpisz cyfry - format: xxx xxx xxxx',
                             )
                         )
                     )

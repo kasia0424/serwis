@@ -5,7 +5,7 @@
 {% block content %}
     
     <h1 class="text-center">
-        Category details
+        {{ 'Category details' |trans }}
     </h1>
 
     <div>
@@ -13,9 +13,9 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Actions</th>
+                        <th>{{ 'Name' |trans }}</th>
+                        <th>{{ 'Description' |trans }}</th>
+                        <th>{{ 'Actions' |trans }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -24,10 +24,10 @@
                         <td>{{ category.description|e }}</td>
                         {% if is_granted('ROLE_ADMIN') %}
                             <td>
-                                <a href="{{ url('/categories/edit', {'id': category.id}) }}" title="Edit category" class="btn btn-default btn-lg">Edit</a>
+                                <a href="{{ url('/categories/edit', {'id': category.id}) }}" title="Edit category" class="btn btn-default btn-lg">{{ 'Edit' |trans }}</a>
                             </td>
                             <td>
-                                <a href="{{ url('/categories/delete', {'id': category.id}) }}" title="Delete category" class="btn btn-default btn-lg">Delete</a>
+                                <a href="{{ url('/categories/delete', {'id': category.id}) }}" title="Delete category" class="btn btn-default btn-lg">{{ 'Delete' |trans }}</a>
                             </td>
                         {% endif %}
                     </tr>
@@ -35,14 +35,14 @@
             </table>
             
             {%  if ads|length > 0 %}
-                <h2 class="Tborder"> Ads in this category: </h2>
+                <h2 class="Tborder"> {{ 'Ads in this category' |trans }} </h2>
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Title</th>
-                            <th>Text</th>
-                            <th>Date of post</th>
-                            <th>Actions</th>
+                            <th>{{ 'Title' |trans }}</th>
+                            <th>{{ 'Text' |trans }}</th>
+                            <th>{{ 'Date of post' |trans }}</th>
+                            <th>{{ 'Actions' |trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,7 +52,7 @@
                             <td>{{ ads.text|e }}</td>
                             <td>{{ ads.postDate|e }}</td>
                             <td>
-                                <a href="{{ url('/ads/view', {'id': ads.id}) }}" title="View ad" class="btn btn-default btn-lg">View details</a>
+                                <a href="{{ url('/ads/view', {'id': ads.id}) }}" title="View ad" class="btn btn-default btn-lg">{{ 'View details' |trans }}</a>
                             </td>
                         </tr>
                     {% else %}
@@ -62,7 +62,7 @@
                                 <td>{{ ad.text|e }}</td>
                                 <td>{{ ad.postDate|e }}</td>
                                 <td>
-                                    <a href="{{ url('/ads/view', {'id': ad.id}) }}" title="View ad" class="btn btn-default btn-lg">View details</a>
+                                    <a href="{{ url('/ads/view', {'id': ad.id}) }}" title="View ad" class="btn btn-default btn-lg">{{ 'View details' |trans }}</a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -71,7 +71,7 @@
                 </table>
             {% else %}
                 <p class="not">
-                    Category does not have any ads.
+                    {{ 'Category does not have any ads.' |trans }}
                 </p>
             {% endif %}
             <div  class="pages">
@@ -88,12 +88,12 @@
         
         {% else %}
             <p class="not">
-                Category not found.
+                {{ 'Category not found.' |trans }}
             </p>
         {% endif %}
     
     </div>
     <h4>
-        <a href="{{ url('/categories/') }}" title="Categories index" class="label label-primary text-uppercase">Back to categories list</a>
+        <a href="{{ url('/categories/') }}" title="Categories index" class="label label-primary text-uppercase">{{ 'Back to categories list' |trans }}</a>
     </h4>
 {% endblock %}

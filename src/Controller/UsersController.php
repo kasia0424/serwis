@@ -110,13 +110,13 @@ class UsersController implements ControllerProviderInterface
             $users = $usersModel->getUsersPage($page, $pageLimit);
             $paginator = array('page' => $page, 'pagesCount' => $pagesCount);
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong';
+            $errors[] = 'Coś poszło nie tak';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Users not found'
+                    'content' => 'Nie znaleziono użytkowników'
                 )
             );
             return $app['twig']->render(
@@ -159,13 +159,13 @@ class UsersController implements ControllerProviderInterface
 
             $form->handleRequest($request);
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in creating form';
+            $errors[] = 'Coś poszło nie tak podczas tworzenia formularza';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in creating form'
+                    'content' => 'Coś poszło nie tak podczas tworzenia formularza'
                 )
             );
             return $app['twig']->render(
@@ -194,13 +194,13 @@ class UsersController implements ControllerProviderInterface
                     $data['login']
                 );
             } catch (\Exception $e) {
-                $errors[] = 'Something went wrong in preparing data';
+                $errors[] = 'Coś poszło nie tak podczas pobierania danych';
 
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'Something went wrong in preparing data'
+                        'content' => 'Coś poszło nie tak podczas pobierania danych'
                     )
                 );
                 return $app['twig']->render(
@@ -222,8 +222,8 @@ class UsersController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'success',
-                            'content' => 'Account has been
-                             created. You can login now.'
+                            'content' => 'Konto zostało
+                             stworzone. Możesz się zalogować.'
                         )
                     );
 
@@ -239,7 +239,7 @@ class UsersController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'warning',
-                            'content' => 'Something went wrong. User was not created'
+                            'content' => 'Coś poszło nie tak. Konto nie zostało utworzone'
                         )
                     );
                     return $app['twig']->render(
@@ -251,7 +251,7 @@ class UsersController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'warning',
-                        'content' => 'This login is already taken.'
+                        'content' => 'Login zajęty.'
                     )
                 );
                 return $app['twig']->render(
@@ -299,18 +299,18 @@ class UsersController implements ControllerProviderInterface
 
             if (!$app['security']->isGranted('ROLE_ADMIN')) {
                 if ((int)$currentUser['id'] !== (int)$id) {
-                    echo 'You can not edit this account';
+                    echo 'Nie możesz edytować tego konta';
                     redirect($app['url_generator']->generate('/ads/'), 301);
                 }
             }
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in preparation process';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in preparation process'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych'
                 )
             );
             return $app['twig']->render(
@@ -353,13 +353,13 @@ class UsersController implements ControllerProviderInterface
                             $data['login']
                         );
                 } catch (\Exception $e) {
-                    $errors[] = 'Something went wrong in preparing data';
+                    $errors[] = 'Coś poszło nie tak podczas pobierania danych';
 
                     $app['session']->getFlashBag()->add(
                         'message',
                         array(
                             'type' => 'danger',
-                            'content' => 'Something went wrong in preparing data'
+                            'content' => 'Coś poszło nie tak podczas pobierania danych'
                         )
                     );
                     return $app['twig']->render(
@@ -376,7 +376,7 @@ class UsersController implements ControllerProviderInterface
                             'message',
                             array(
                                 'type' => 'success',
-                                'content' => 'Account edited.'
+                                'content' => 'Konto zostało edytowane.'
                             )
                         );
                         return $app->redirect(
@@ -392,7 +392,7 @@ class UsersController implements ControllerProviderInterface
                             'message',
                             array(
                                 'type' => 'danger',
-                                'content' => 'Something went wrong. '
+                                'content' => 'Coś poszło nie tak. '
                             )
                         );
                         return $app['twig']->render(
@@ -413,7 +413,7 @@ class UsersController implements ControllerProviderInterface
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'User not found'
+                    'content' => 'Nie znaleziono użytkownika'
                 )
             );
             return $app->redirect(
@@ -451,13 +451,13 @@ class UsersController implements ControllerProviderInterface
                 'id' => $user['id']
             );
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting data';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting data'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych'
                 )
             );
             return $app['twig']->render(
@@ -471,7 +471,7 @@ class UsersController implements ControllerProviderInterface
             $form
                 ->remove('login')
                 ->remove('password')
-                ->add('save', 'submit');
+                ->add('Zapisz', 'submit');
 
             $form->handleRequest($request);
 
@@ -494,7 +494,7 @@ class UsersController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'success',
-                            'content' => 'Account edited.'
+                            'content' => 'Konto zostało edytowane.'
                         )
                     );
                     return $app->redirect(
@@ -504,13 +504,13 @@ class UsersController implements ControllerProviderInterface
                         301
                     );
                 } catch (\Exception $e) {
-                    $errors[] = 'Something went wrong';
+                    $errors[] = 'Coś poszło nie tak';
                     
                     $app['session']->getFlashBag()->add(
                         'message',
                         array(
                             'type' => 'danger',
-                            'content' => 'Something went wrong. '
+                            'content' => 'Coś poszło nie tak. '
                         )
                     );
                     return $app['twig']->render(
@@ -532,7 +532,7 @@ class UsersController implements ControllerProviderInterface
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'User not found'
+                    'content' => 'Użytkownik nie został znaleziony'
                 )
             );
             return $app->redirect(
@@ -565,13 +565,13 @@ class UsersController implements ControllerProviderInterface
             
             $choiceRole = $usersModel->getRolesList();
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting data';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting data'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych'
                 )
             );
             return $app['twig']->render(
@@ -591,10 +591,11 @@ class UsersController implements ControllerProviderInterface
                     'role_id',
                     'choice',
                     array(
+                        'label' => 'Kategoria',
                         'choices' => $choiceRole
                     )
                 )
-                ->add('save', 'submit')
+                ->add('Zapisz', 'submit')
                 ->getForm();
 
             $form->handleRequest($request);
@@ -618,7 +619,7 @@ class UsersController implements ControllerProviderInterface
                                 'message',
                                 array(
                                     'type' => 'danger',
-                                    'content' => 'You can not change this user role. It is the last admin user.'
+                                    'content' => 'Nie możesz zmienić roli tego użytkownika. To ostatni admin.'
                                 )
                             );
                             return $app->redirect(
@@ -634,7 +635,8 @@ class UsersController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'success',
-                            'content' => 'Account edited. This user will have changed role after next log-in'
+                            'content' => 'Konto zostało edytowane.
+                            Nowe uprawnienia będą dostępne po ponownym logowaniu'
                         )
                     );
                     return $app->redirect(
@@ -644,13 +646,13 @@ class UsersController implements ControllerProviderInterface
                         301
                     );
                 } catch (\Exception $e) {
-                    $errors[] = 'Something went wrong';
+                    $errors[] = 'Coś poszło nie tak';
                     
                     $app['session']->getFlashBag()->add(
                         'message',
                         array(
                             'type' => 'danger',
-                            'content' => 'Something went wrong. '
+                            'content' => 'Coś poszło nie tak. '
                         )
                     );
                     return $app['twig']->render(
@@ -671,7 +673,7 @@ class UsersController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'User not found'
+                        'content' => 'Nie znaleziono użytkownika'
                     )
                 );
                 return $app->redirect(
@@ -709,7 +711,7 @@ class UsersController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'It is your account you are deleting.'
+                        'content' => 'Usuwasz swoje konto.'
                     )
                 );
             }
@@ -725,7 +727,7 @@ class UsersController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'You can not delete admin account. Pass it to someone else.'
+                        'content' => 'Nie możesz usunąć konta dmina. Przekaż je komuś.'
                     )
                 );
                 return $app->redirect(
@@ -735,7 +737,7 @@ class UsersController implements ControllerProviderInterface
             }
             if (!$app['security']->isGranted('ROLE_ADMIN')) {
                 if ((int)$currentUser['id'] !== (int)$id) {
-                    echo 'You can not delete this account';
+                    echo 'Nie możesz usunąć tego konta';
                     return $app->redirect(
                         $app['url_generator']->generate('/ads/'),
                         301
@@ -743,13 +745,13 @@ class UsersController implements ControllerProviderInterface
                 }
             }
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting user';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych użytkownika';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting user'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych użytkownika'
                 )
             );
             return $app['twig']->render(
@@ -767,14 +769,14 @@ class UsersController implements ControllerProviderInterface
                     'data' => $id,
                 )
             )
-            ->add('Yes', 'submit')
-            ->add('No', 'submit')
+            ->add('Tak', 'submit')
+            ->add('Nie', 'submit')
             ->getForm();
 
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            if ($form->get('No')->isClicked()) {
+            if ($form->get('Nie')->isClicked()) {
                 return $app->redirect(
                     $app['url_generator']->generate(
                         '/'
@@ -794,7 +796,7 @@ class UsersController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'success',
-                            'content' => 'Account deleted'
+                            'content' => 'Konto zostało usunięte.'
                         )
                     );
                     return $app->redirect(
@@ -804,13 +806,13 @@ class UsersController implements ControllerProviderInterface
                         301
                     );
                 } catch (\Exception $e) {
-                    $errors[] = 'Something went wrong';
+                    $errors[] = 'Coś poszło nie tak';
 
                     $app['session']->getFlashBag()->add(
                         'message',
                         array(
                             'type' => 'danger',
-                            'content' => 'User not found'
+                            'content' => 'Użytkownik nie znaleziony'
                         )
                     );
                     return $app['twig']->render('404.twig');
@@ -853,13 +855,13 @@ class UsersController implements ControllerProviderInterface
             $user = $usersModel-> getUser($id);
             $number = $usersModel-> getPhone($id);
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong';
+            $errors[] = 'Coś poszło nie tak';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong'
+                    'content' => 'Coś poszło nie tak'
                 )
             );
             return $app['twig']->render(
@@ -891,13 +893,13 @@ class UsersController implements ControllerProviderInterface
             $id = $this->model->getIdCurrentUser($app);
             $user = $this->model->getUserById($id);
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting user';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych użytkownika';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting user'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych użytkownika'
                 )
             );
             return $app['twig']->render(
@@ -916,18 +918,18 @@ class UsersController implements ControllerProviderInterface
                     'repeated',
                     array(
                         'type' => 'password',
-                        'invalid_message' => 'The password fields must match.',
+                        'invalid_message' => 'Wprowadzone hasła muszą być takie same.',
                         'options' => array('attr' => array('class' => 'password-field')),
                         'required' => true,
-                        'first_options'  => array('label' => 'Password'),
-                        'second_options' => array('label' => 'Repeat password'),
+                        'first_options'  => array('label' => 'Hasło'),
+                        'second_options' => array('label' => 'Powtórz hasło'),
                         'constraints' => array(
                             new Assert\NotBlank(),
                             new Assert\Length(
                                 array(
                                     'min' => 5,
                                     'minMessage' =>
-                                        'Use more than 4 characters',
+                                        'Użyj więcej niż 4 znaków',
                                 )
                             )
                         )
@@ -938,16 +940,16 @@ class UsersController implements ControllerProviderInterface
                     'repeated',
                     array(
                         'type' => 'password',
-                        'invalid_message' => 'The password fields must match.',
+                        'invalid_message' => 'Wprowadzone hasła muszą być takie same.',
                         'options' => array('attr' => array('class' => 'password-field')),
                         'required' => true,
                         'first_options'  => array(
-                            'label' => 'New password',
-                            'attr' => array('placeholder' => 'Use more than 4 characters')
+                            'label' => 'Nowe hasło',
+                            'attr' => array('placeholder' => 'Użyj więcej niż 4 znaków')
                         ),
                         'second_options' => array(
-                            'label' => 'Repeat new password',
-                            'attr' => array('placeholder' => 'Use more than 4 characters')
+                            'label' => 'Powtórz nowe hasło',
+                            'attr' => array('placeholder' => 'Użyj więcej niż 4 znaków')
                         ),
                         'constraints' => array(
                             new Assert\NotBlank(),
@@ -955,7 +957,7 @@ class UsersController implements ControllerProviderInterface
                                 array(
                                     'min' => 5,
                                     'minMessage' =>
-                                        'Use more than 4 characters',
+                                        'Użyj więcej niż 4 znaków',
                                 )
                             )
                         )
@@ -982,7 +984,7 @@ class UsersController implements ControllerProviderInterface
                                 'message',
                                 array(
                                     'type' => 'success',
-                                    'content' => 'Password is changed. Next time log-in with a new one.'
+                                    'content' => 'Hasło zostało zmienione. Następnym razem użyj nowego.'
                                 )
                             );
                             return $app->redirect(
@@ -990,13 +992,13 @@ class UsersController implements ControllerProviderInterface
                                 301
                             );
                         } catch (\Exception $e) {
-                            $errors[] = 'Something went wrong in getting data';
+                            $errors[] = 'Coś poszło nie tak podczas pobierania danych';
 
                             $app['session']->getFlashBag()->add(
                                 'message',
                                 array(
                                     'type' => 'danger',
-                                    'content' => 'Something went wrong in getting data'
+                                    'content' => 'Coś poszło nie tak podczas pobierania danych'
                                 )
                             );
                             return $app['twig']->render(
@@ -1008,20 +1010,20 @@ class UsersController implements ControllerProviderInterface
                             'message',
                             array(
                                 'type' => 'danger',
-                                'content' => 'Current password is not correct'
+                                'content' => 'Bieżące hasło jest niepoprawne'
                             )
                         );
 
                     }
                 }
             } catch (\Exception $e) {
-                $errors[] = 'Something went wrong in getting data';
+                $errors[] = 'SCoś poszło nie tak podczas pobierania danych';
 
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'Something went wrong in getting data'
+                        'content' => 'Coś poszło nie tak podczas pobierania danych'
                     )
                 );
                 return $app['twig']->render(
@@ -1033,7 +1035,7 @@ class UsersController implements ControllerProviderInterface
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'User not found'
+                    'content' => 'Użytkownik nie znaleziony'
                 )
             );
             return $app->redirect(
@@ -1068,13 +1070,13 @@ class UsersController implements ControllerProviderInterface
             $usersModel = new UsersModel($app);
             $idLoggedUser = $usersModel->getIdCurrentUser($app);
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting user';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych użytkownika';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting user'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych użytkownika'
                 )
             );
             return $app['twig']->render(
@@ -1095,13 +1097,13 @@ class UsersController implements ControllerProviderInterface
                 $paginator = array('page' => $page, 'pagesCount' => $pagesCount);
                 $this->view['ads'] = $ads;
             } catch (\Exception $e) {
-                $errors[] = 'Something went wrong';
+                $errors[] = 'Coś poszło nie tak';
 
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'Ads not found'
+                        'content' => 'Nie znaleziono ogłoszeń'
                     )
                 );
                 return $app['twig']->render(
@@ -1113,7 +1115,7 @@ class UsersController implements ControllerProviderInterface
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Ads not fond'
+                    'content' => 'Nie znaleziono ogłoszeń'
                 )
             );
             return $app['twig']->render(

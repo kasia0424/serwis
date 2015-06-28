@@ -4,17 +4,17 @@
 
 {% block content %}
     <h1 class="text-center">
-        User's account
+        {{ 'Users account' |trans }}
     </h1>
     
     <div>
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Id</th>
-                <th>Login</th>
-                <th>Role</th>
-                <th>Phone number</th>
+                <th>{{ 'Id' |trans }}</th>
+                <th>{{ 'Logins' |trans }}</th>
+                <th>{{ 'Role' |trans }}</th>
+                <th>{{ 'Phone number' |trans }}</th>
                 <th colspan="3">&nbsp;</th>
             </tr>
             </thead>
@@ -27,18 +27,18 @@
                 <td>{{ number }}</td>
                 {% if user.id == logged %}
                     <td>
-                        <a href="{{ url('/user/edit', {'id': user.id}) }}" title="Edit password" class="btn btn-default btn-lg">Edit password</a>
+                        <a href="{{ url('/user/edit', {'id': user.id}) }}" title="Edit password" class="btn btn-default btn-lg">{{ 'Edit password' |trans }}</a>
                     </td>
                     <td>
                         {% if number == null %}
-                            <a href="{{ url('/user/number') }}" title="Edit phone number" class="btn btn-default btn-lg">Add phone number</a>
+                            <a href="{{ url('/user/number') }}" title="Edit phone number" class="btn btn-default btn-lg">{{ 'Add phone number' |trans }}</a>
                         {% else %}
-                            <a href="{{ url('/user/number') }}" title="Edit phone number" class="btn btn-default btn-lg">Edit phone number</a>
+                            <a href="{{ url('/user/number') }}" title="Edit phone number" class="btn btn-default btn-lg">{{ 'Edit phone number' |trans }}</a>
                         {% endif %}
                     </td>
                 {% endif %}
                 <td>
-                    <a href="{{ url('/user/delete', {'id': user.id}) }}" title="Delete user" class="btn btn-default btn-lg">Delete </a>
+                    <a href="{{ url('/user/delete', {'id': user.id}) }}" title="Delete user" class="btn btn-default btn-lg">{{ 'Delete' |trans }} </a>
                 </td>
             </tr>
             </tbody>
@@ -47,8 +47,8 @@
     
     <h4>
         {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ url('/user/panel') }}" title="Users index" class="label label-primary text-uppercase">Back to panel</a>
+            <a href="{{ url('/user/panel') }}" title="Users index" class="label label-primary text-uppercase">{{ 'Back to panel' |trans }}</a>
         {% endif %}
-        <a href="{{ url('/user/account') }}" title="Users account" class="label label-primary text-uppercase">Back to account</a>
+        <a href="{{ url('/user/account') }}" title="Users account" class="label label-primary text-uppercase">{{ 'Back to account' |trans }}</a>
     </h4>
 {% endblock %}

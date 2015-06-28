@@ -67,13 +67,13 @@ class PhotosController implements ControllerProviderInterface
             $form = $app['form.factory']
                 ->createBuilder(new FilesForm(), array('ad_id'=>$adId))->getForm();
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong while preparing form';
+            $errors[] = 'Coś poszło nie tak podczas tworzenia formularza';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong while preparing form'
+                    'content' => 'Coś poszło nie tak podczas tworzenia formularza'
                 )
             );
             return $app['twig']->render(
@@ -109,7 +109,7 @@ class PhotosController implements ControllerProviderInterface
                             'message',
                             array(
                                 'type' => 'danger',
-                                'content' => 'This is not your ad - you can not add photo to it.'
+                                'content' => 'To nie jest Twoje ogłoszenie - nie możesz dodać do niego zdjęcia.'
                             )
                         );
                         return $app['twig']->render(
@@ -121,7 +121,7 @@ class PhotosController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'success',
-                            'content' => 'File successfully uploaded.'
+                            'content' => 'Zdjęcie zostało dodane.'
                         )
                     );
                     return $app->redirect(
@@ -138,7 +138,7 @@ class PhotosController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'danger',
-                            'content' => 'Can not upload file.'
+                            'content' => 'Nie można przesłać zdjęcia.'
                         )
                     );
                 }
@@ -148,7 +148,7 @@ class PhotosController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'Form contains invalid data.'
+                        'content' => 'Formularz zawiera nieprawidłowe dane.'
                     )
                 );
             }
@@ -188,7 +188,7 @@ class PhotosController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'danger',
-                            'content' => 'This is not your ad - you can not delete it\'s photo.'
+                            'content' => 'To nie jest twoje ogłoszenie - nie możesz usunąć jego zdjęcia.'
                         )
                     );
                     return $app['twig']->render(
@@ -197,13 +197,13 @@ class PhotosController implements ControllerProviderInterface
                 }
             }
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting user';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych użytkownika';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting user'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych użytkownika'
                 )
             );
             return $app['twig']->render(
@@ -219,13 +219,13 @@ class PhotosController implements ControllerProviderInterface
             $form->handleRequest($request);
 
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in creating form';
+            $errors[] = 'Coś poszło nie tak podczas tworzenia formularza';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in creating form'
+                    'content' => 'Coś poszło nie tak podczas tworzenia formularza'
                 )
             );
             return $app['twig']->render(
@@ -234,7 +234,7 @@ class PhotosController implements ControllerProviderInterface
         }
         
         if ($form->isValid()) {
-            if ($form->get('No')->isClicked()) {
+            if ($form->get('Nie')->isClicked()) {
                 return $app->redirect(
                     $app['url_generator']->generate(
                         '/'
@@ -251,7 +251,7 @@ class PhotosController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'success',
-                            'content' => 'Photo has been deleted.'
+                            'content' => 'Zdjęcie zostało usunięte.'
                         )
                     );
 
@@ -267,7 +267,7 @@ class PhotosController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'danger',
-                            'content' => 'Photo not found'
+                            'content' => 'Nie znaleziono zdjęcia'
                         )
                     );
                     return $app['twig']->render('404.twig');

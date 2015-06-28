@@ -42,6 +42,7 @@ class LoginForm extends AbstractType
             'login',
             'text',
             array(
+                'label' => 'Użytkownik',
                 'constraints' => array(
                     new Assert\NotBlank(),
                     new Assert\Length(array('min' => 8, 'max' => 16))
@@ -52,6 +53,7 @@ class LoginForm extends AbstractType
             'password',
             'password',
             array(
+                'label' => 'Hasło',
                 'constraints' => array(
                     new Assert\NotBlank(),
                     new Assert\Length(array('min' => 8))

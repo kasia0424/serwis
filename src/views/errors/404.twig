@@ -2,10 +2,10 @@
 
 {% block title %}Not found{% endblock %}
 {% block content %}
-	
+
     <div class="error">
-        <h1> Breathe deeply. Stay calm.</h1>
-        <h3>The page you're looking for was <strong>not found</strong>. </h3>
+        <h1> {{ 'Breathe deeply. Stay calm.' |trans }}</h1>
+        <h3>{{ 'The page you are looking for was' |trans }} <strong>{{ 'not found' |trans }}</strong>. </h3>
         
         {% for flashMessage in app.session.getFlashBag.get('message') %}
             <div class="alert alert-{{ flashMessage.type }}">
@@ -13,6 +13,6 @@
             </div>
         {% endfor %}
     </div>
-    <p><a href="{{ url('/ads/') }}" title="Home">Back to the homepage.</a></p>
+    <p><a href="{{ url('/ads/') }}" title="Home">{{ 'Back to the homepage.' |trans }}</a></p>
 
 {% endblock %}

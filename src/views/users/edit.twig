@@ -4,13 +4,13 @@
 
 {% block content %}
     <h1 class="text-center">
-        Edit User
+        {{ 'Edit User' |trans }}
     </h1>
     <form action="" method="post">
         {{ form_widget(form) }}
     </form>
 
     <h4>
-        <a href="{{ url('/user/account') }}" title="User's account" class="label label-primary text-uppercase">Back to account</a>
+        <a href="{{ url('/user/account') }}" title="User's account" class="label label-primary text-uppercase">{{ 'Back to account' |trans }}</a>
     </h4>
 {% endblock %}

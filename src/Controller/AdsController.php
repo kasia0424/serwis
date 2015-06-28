@@ -69,13 +69,13 @@ class AdsController implements ControllerProviderInterface
 
             $this->view['loggedUser'] = $idLoggedUser;
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting user';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych użytkownika';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting user'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych użytkownika'
                 )
             );
             return $app['twig']->render(
@@ -95,13 +95,13 @@ class AdsController implements ControllerProviderInterface
                 = array('page' => $page, 'pagesCount' => $pagesCount);
             $this->view['ads'] = $ads;
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong';
+            $errors[] = 'Coś poszło nie tak';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Ads not found'
+                    'content' => 'Ogłoszenie nie znalezione'
                 )
             );
             return $app['twig']->render(
@@ -130,7 +130,7 @@ class AdsController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'Add your phone number before.'
+                        'content' => 'Najpierw dodaj swój numer kontaktowy.'
                     )
                 );
                 return $app->redirect(
@@ -139,13 +139,13 @@ class AdsController implements ControllerProviderInterface
                 );
             }
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting user';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych użytkownika';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting user data'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych użytkownika'
                 )
             );
             return $app['twig']->render(
@@ -172,19 +172,20 @@ class AdsController implements ControllerProviderInterface
                     'category_id',
                     'choice',
                     array(
-                        'placeholder' => 'Choose category',
+                        'label' => 'Kategoria',
+                        'placeholder' => 'Wybierz kategorię',
                         'choices' => $choiceCategory
                     )
                 );
 
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in creating form';
+            $errors[] = 'Coś poszło nie tak podczas tworzenia formularza';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in creating form'
+                    'content' => 'Coś poszło nie tak podczas tworzenia formularza'
                 )
             );
             return $app['twig']->render(
@@ -204,7 +205,7 @@ class AdsController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'success',
-                        'content' => 'Your ad has been added.'
+                        'content' => 'Twoje ogłoszenie zostało dodane.'
                     )
                 );
                 return $app->redirect(
@@ -212,13 +213,13 @@ class AdsController implements ControllerProviderInterface
                     301
                 );
             } catch (\Exception $e) {
-                $errors[] = 'Something went wrong in processing data';
+                $errors[] = 'Coś poszło nie tak podczas przetwarzania danych';
 
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'Something went wrong in processing data'
+                        'content' => 'Coś poszło nie tak podczas przetwarzania danych'
                     )
                 );
                 return $app['twig']->render(
@@ -254,7 +255,7 @@ class AdsController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'Ad not found'
+                        'content' => 'Ogłoszenie nie znalezione'
                     )
                 );
                 return $app['twig']->render(
@@ -270,7 +271,7 @@ class AdsController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'danger',
-                            'content' => 'This is not your ad - you can not edit it.'
+                            'content' => 'To nie jest twoje ogłoszenie - nie możesz go edytować.'
                         )
                     );
                     return $app['twig']->render(
@@ -282,13 +283,13 @@ class AdsController implements ControllerProviderInterface
             $categoriesModel = new CategoriesModel($app);
             $choiceCategory = $categoriesModel->getCategoriesList();
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting data';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting data'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych'
                 )
             );
             return $app['twig']->render(
@@ -314,7 +315,8 @@ class AdsController implements ControllerProviderInterface
                 'category_id',
                 'choice',
                 array(
-                    'placeholder' => 'Choose category',
+                    'label' => 'Kategoria',
+                    'placeholder' => 'Wybierz kategorię',
                     'choices' => $choiceCategory
                 )
             );
@@ -332,7 +334,7 @@ class AdsController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'success',
-                        'content' => 'Your ad has been edited.'
+                        'content' => 'Twoje ogłoszenie zostało edytowane.'
 
                     )
                 );
@@ -345,13 +347,13 @@ class AdsController implements ControllerProviderInterface
                 );
             }
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong';
+            $errors[] = 'Coś poszło nie tak';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Ad not found. '
+                    'content' => 'Ogłoszenie nie znalezione. '
                 )
             );
             return $app['twig']->render(
@@ -389,7 +391,7 @@ class AdsController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'danger',
-                            'content' => 'This is not your ad - you can not delete it.'
+                            'content' => 'To nie jest twoje ogłoszenie - nie możesz go usunąć.'
                         )
                     );
                     return $app['twig']->render(
@@ -398,13 +400,13 @@ class AdsController implements ControllerProviderInterface
                 }
             }
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting user';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych użytkownika';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting user'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych użytkownika'
                 )
             );
             return $app['twig']->render(
@@ -419,13 +421,13 @@ class AdsController implements ControllerProviderInterface
 
             $form->handleRequest($request);
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in creating form';
+            $errors[] = 'Coś poszło nie tak podczas tworzenia formularza';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in creating form'
+                    'content' => 'Coś poszło nie tak podczas tworzenia formularza'
                 )
             );
             return $app['twig']->render(
@@ -434,7 +436,7 @@ class AdsController implements ControllerProviderInterface
         }
         
         if ($form->isValid()) {
-            if ($form->get('No')->isClicked()) {
+            if ($form->get('Nie')->isClicked()) {
                 return $app->redirect(
                     $app['url_generator']->generate(
                         '/'
@@ -449,7 +451,7 @@ class AdsController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'success',
-                            'content' => 'Ad has been deleted.'
+                            'content' => 'Ogłoszenie zostało usunięte.'
                         )
                     );
                     return $app->redirect(
@@ -463,7 +465,7 @@ class AdsController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'danger',
-                            'content' => 'Ad not found'
+                            'content' => 'Ogłoszenie nie znalezione'
                         )
                     );
                     return $app['twig']->render('404.twig');
@@ -496,13 +498,13 @@ class AdsController implements ControllerProviderInterface
             $usersModel = new UsersModel($app);
             $idLoggedUser = $usersModel->getIdCurrentUser($app);
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in getting user';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych użytkownika';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong in getting user'
+                    'content' => 'Coś poszło nie tak podczas pobierania danych użytkownika'
                 )
             );
             return $app['twig']->render(
@@ -521,7 +523,7 @@ class AdsController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'Ad not found'
+                        'content' => 'Ogłoszenie dodane'
                     )
                 );
                 return $app['twig']->render(
@@ -533,7 +535,7 @@ class AdsController implements ControllerProviderInterface
             $photoTab= $photosModel->getPhoto($ad['id']);
 
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong';
+            $errors[] = 'Coś poszło nie tak';
 
             return $app['twig']->render(
                 'errors/404.twig'

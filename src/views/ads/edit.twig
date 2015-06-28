@@ -4,15 +4,15 @@
 
 {% block content %}
     <h1 class="text-center">
-        Edit Ad
+        {{ 'Edit Ad' |trans }}
     </h1>
     <div>
         <form action="#" method="post">
             {{ form_widget(form) }}
-            <input type="submit" name="submit" value="Save"/>
+            <input type="submit" name="submit" value="Prześlij"/>
         </form>
     </div>
     <h4>
-        <a href="{{ url('/ads/') }}" title="ads index" class="label label-primary text-uppercase">Back to ads list</a>
+        <a href="{{ url('/ads/') }}" title="ads index" class="label label-primary text-uppercase">{{ 'Back to ads list' |trans }}</a>
     </h4>
 {% endblock %}

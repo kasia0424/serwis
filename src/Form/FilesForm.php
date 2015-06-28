@@ -44,7 +44,7 @@ class FilesForm extends AbstractType
             'image',
             'file',
             array(
-                'label' => 'Choose file',
+                'label' => 'Wybierz plik',
                 'constraints' => array(
                     new Assert\Image(
                         array(
@@ -54,7 +54,7 @@ class FilesForm extends AbstractType
                                 "image/gif",
                                 "image/png"
                             ),
-                            'mimeTypesMessage' => "Photo should have one of the following formats: JPG, GIF or PNG."
+                            'mimeTypesMessage' => "Zdjęcie powinno byc w jednym z formatów: JPG, GIF or PNG."
                         )
                     )
                 )
@@ -68,7 +68,7 @@ class FilesForm extends AbstractType
                 'label' => 'add_id'
             )
         )
-        ->add('save', 'submit', array('label' => 'Upload file'));
+        ->add('save', 'submit', array('label' => 'Prześlij plik'));
     }
 
     /**

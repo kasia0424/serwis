@@ -4,13 +4,13 @@
 
 {% block content %}
     <h1 class="text-center">
-        Edit user's phone number
+        {{ 'Edit phone number' |trans }}
     </h1>
     
     <h3 class="not">
-        <strong>User: </strong> {{ user.login }} <br/>
+        <strong>{{ 'User' |trans }}</strong> {{ user.login }} <br/>
         {% if number != null %}
-            <strong> Phone number:</strong><br/>
+            <strong>{{ 'Phone number' |trans }}</strong><br/>
             {{ number }}
         {% endif %}
     </h3>
@@ -22,6 +22,6 @@
     </div>
 
     <h4>
-        <a href="{{ url('/user/account') }}" title="Users account" class="label label-primary text-uppercase">Back to account</a>
+        <a href="{{ url('/user/account') }}" title="Users account" class="label label-primary text-uppercase">{{ 'Back to account' |trans }}</a>
     </h4>
 {% endblock %}

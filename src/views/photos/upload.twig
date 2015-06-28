@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1 class="text-center">
-        Upload file
+        {{ 'Upload photo' |trans }}
     </h1>
     {% for flashMessage in app.session.getFlashBag.get('message') %}
         <div class="alert alert-{{ flashMessage.type }}">
@@ -16,5 +16,5 @@
             {{ form_widget(form) }}
         </form>
     </div>
-    <a href="{{ url('/ads/view', {'id': id}) }}" title="View ad" class="label label-primary text-uppercase">Back to ad</a>
+    <a href="{{ url('/ads/view', {'id': id}) }}" title="View ad" class="label label-primary text-uppercase">{{ 'Back to ad' |trans }}</a>
 {% endblock %}

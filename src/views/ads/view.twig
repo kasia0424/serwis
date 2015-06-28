@@ -5,7 +5,7 @@
 {% block content %}
     
     <h1 class="text-center">
-        Ad details
+        {{ 'Ad details' |trans }}
     </h1>
     
     <div>
@@ -13,14 +13,14 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th> </th>
-                        <th>Title</th>
-                        <th>Text</th>
-                        <th>Category</th>
-                        <th>Date of post</th>
-                        <th>Phone number</th>
+                        <th>{{ 'Photo' |trans }}</th>
+                        <th>{{ 'Title' |trans }}</th>
+                        <th>{{ 'Text' |trans }}</th>
+                        <th>{{ 'Category' |trans }}</th>
+                        <th>{{ 'Date of post' |trans }}</th>
+                        <th>{{ 'Phone number' |trans }}</th>
                         {% if is_granted('ROLE_USER') and loggedUser == ad.user_id %}
-                            <th>Actions</th>
+                            <th>{{ 'Actions' |trans }}</th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -29,15 +29,15 @@
                         <td>
                             {% if photo == null %}
                                 {% if is_granted('ROLE_USER') and loggedUser == ad.user_id %}
-                                    <a href="{{ url('/photos/upload', {'id': ad.id}) }}" title="Add photo" class="btn btn-default btn-lg active" role="button">Add photo</a>
+                                    <a href="{{ url('/photos/upload', {'id': ad.id}) }}" title="Add photo" class="btn btn-default btn-lg active" role="button">{{ 'Add photo' |trans }}</a>
                                 {% endif %}
                             {% else %}
                                 <img src="{{ app.request.basepath }}/media/{{ photo.name }}"  height="200" width="200" alt="obrazek ogłoszenia" class="img-rounded"><br/><br/>
                                 {% if is_granted('ROLE_USER') and loggedUser == ad.user_id %}
-                                    <a href="{{ url('/photos/', {'id': ad.id}) }}" title="photo upload"  class="btn btn-default btn-lg">Change photo</a><br/>
-                                    <a href="{{ url('/photos/delete', {'photo': photo.id, 'id': ad.id, 'user':ad.user_id}) }}" title="Delete photo" class="btn btn-default btn-lg marginT">Delete photo</a>
+                                    <a href="{{ url('/photos/', {'id': ad.id}) }}" title="photo upload"  class="btn btn-default btn-lg">{{ 'Change photo' |trans }}</a><br/>
+                                    <a href="{{ url('/photos/delete', {'photo': photo.id, 'id': ad.id, 'user':ad.user_id}) }}" title="Delete photo" class="btn btn-default btn-lg marginT">{{ 'Delete photo' |trans }}</a>
                                 {% elseif is_granted('ROLE_ADMIN')%}
-                                    <a href="{{ url('/photos/delete', {'photo': photo.id, 'id': ad.id, 'user':ad.user_id}) }}" title="Delete photo" class="btn btn-default btn-lg">Delete photo</a>
+                                    <a href="{{ url('/photos/delete', {'photo': photo.id, 'id': ad.id, 'user':ad.user_id}) }}" title="Delete photo" class="btn btn-default btn-lg">{{ 'Delete photo' |trans }}</a>
                                 {% endif %}
                             {% endif %}
                         </td>
@@ -50,22 +50,22 @@
                         <td>{{ number|e }}</td>
                         {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and loggedUser == ad.user_id) %}
                             <td>
-                                <a href="{{ url('/ads/edit', {'id': ad.id}) }}" title="Edit ad" class="btn btn-default btn-lg">Edit text</a>
-                                <a href="{{ url('/ads/delete', {'id': ad.id, 'user':ad.user_id}) }}" title="Delete ad" class="btn btn-default btn-lg">Delete</a>
+                                <a href="{{ url('/ads/edit', {'id': ad.id}) }}" title="Edit ad" class="btn btn-default btn-lg">{{ 'Edit text' |trans }}</a>
+                                <a href="{{ url('/ads/delete', {'id': ad.id, 'user':ad.user_id}) }}" title="Delete ad" class="btn btn-default btn-lg">{{ 'Delete' |trans }}</a>
                             </td>
                         {% endif %}
-                        
+
                     </tr>
                 </tbody>
             </table>
         {% else %}
             <p class="not">
-                Ad not found.
+                {{ 'Ad not found.' |trans }}
             </p>
         {% endif %}
     </div>
     
     <h4>
-        <a href="{{ url('/ads/') }}" title="ads index" class="label label-primary text-uppercase">Back to ads list</a>
+        <a href="{{ url('/ads/') }}" title="ads index" class="label label-primary text-uppercase">{{ 'Back to ads list' |trans }}</a>
     </h4>
 {% endblock %}

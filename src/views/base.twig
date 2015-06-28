@@ -17,19 +17,19 @@
         <nav class="navbar navbar-inverse">
             <div class="container">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <a href="{{ url('auth_logout') }}" title="{{ 'Logout'|trans }}" onclick="return confirm('You will be logged out')" class="label label-info pull-right text-uppercase">{{ 'Logout'|trans }}</a>
-                    <a href="{{ url('/user/account') }}" title="User's account" class="label label-info pull-right text-uppercase">Account</a>
+                    <a href="{{ url('auth_logout') }}" title="{{ 'Logout'|trans }}" onclick="return confirm('Zostaniesz wylogowany')" class="label label-info pull-right text-uppercase">{{ 'Logout'|trans }}</a>
+                    <a href="{{ url('/user/account') }}" title="User's account" class="label label-info pull-right text-uppercase">{{ 'Account' |trans }}</a>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ url('/user/panel') }}" title="Admin panel" class="label label-info pull-right text-uppercase">Admin panel</a>
+                        <a href="{{ url('/user/panel') }}" title="Admin panel" class="label label-info pull-right text-uppercase">{{ 'Admin panel' |trans }}</a>
                     {% endif %}
                 {% else %}
                     <a href="{{ url('auth_login') }}" title="{{ 'Login'|trans }}" class="label label-info pull-right text-uppercase">{{ 'Login'|trans }}</a>
-                    <a href="{{ url('/user/add') }}" title="Register" class="label label-info pull-right text-uppercase">Register</a>
+                    <a href="{{ url('/user/add') }}" title="Register" class="label label-info pull-right text-uppercase">{{'Register' |trans }}</a>
                 {% endif %}
                 
                 <ul  class="nav nav-pills" role="tablist">
-                    <li role="presentation" class="active"><a href="{{ url('/ads/') }}" title="ads index">Ads</a></li>
-                    <li role="presentation"  class="active"><a href="{{ url('/categories/') }}" title="categories index">Categories</a></li>
+                    <li role="presentation" class="active"><a href="{{ url('/ads/') }}" title="ads index">{{ 'Ads' |trans }}</a></li>
+                    <li role="presentation"  class="active"><a href="{{ url('/categories/') }}" title="categories index">{{ 'Categories' |trans }}</a></li>
                 </ul>
             </div>
         </nav>

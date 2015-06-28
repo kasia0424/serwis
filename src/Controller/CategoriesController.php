@@ -77,13 +77,13 @@ class CategoriesController implements ControllerProviderInterface
                 = array('page' => $page, 'pagesCount' => $pagesCount);
             $this->view['categories'] = $categories;
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong';
+            $errors[] = 'Coś poszło nie tak';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Categories not found'
+                    'content' => 'Kategorie nie znalezione'
                 )
             );
             return $app['twig']->render(
@@ -120,7 +120,7 @@ class CategoriesController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'success',
-                        'content' => 'Category has been added.'
+                        'content' => 'Kategoria została dodana.'
                     )
                 );
                 return $app->redirect(
@@ -130,13 +130,13 @@ class CategoriesController implements ControllerProviderInterface
             }
 
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong';
+            $errors[] = 'Coś poszło nie tak';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Something went wrong'
+                    'content' => 'Coś poszło nie tak'
                 )
             );
             return $app['twig']->render(
@@ -166,13 +166,13 @@ class CategoriesController implements ControllerProviderInterface
             $id = (int) $request->get('id', 0);
             $category = $categoriesModel->getCategory($id);
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong with getting current data';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Category not found'
+                    'content' => 'Kategoria nie znaleziona'
                 )
             );
             return $app['twig']->render(
@@ -203,7 +203,7 @@ class CategoriesController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'success',
-                        'content' => 'Category has been edited.'
+                        'content' => 'Kategoria została edytowana.'
                     )
                 );
                 return $app->redirect(
@@ -216,13 +216,13 @@ class CategoriesController implements ControllerProviderInterface
 
             }
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong in form';
+            $errors[] = 'Coś poszło nie tak podczas przetwarzania danych';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Category not found'
+                    'content' => 'Kategoria nie znaleziona'
                 )
             );
             return $app['twig']->render(
@@ -252,13 +252,13 @@ class CategoriesController implements ControllerProviderInterface
             $id = (int) $request -> get('id', 0);
             $categoriesModel = new CategoriesModel($app);
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong with getting current data';
+            $errors[] = 'Coś poszło nie tak podczas pobierania danych';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Category not found'
+                    'content' => 'Kategoria nie znaleziona'
                 )
             );
             return $app['twig']->render(
@@ -273,7 +273,7 @@ class CategoriesController implements ControllerProviderInterface
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'You can not delete this category. It is a default one.'
+                    'content' => 'Nie możesz usunąć tej kategorii. To domyślna kategoria.'
                 )
             );
             return $app['twig']->render(
@@ -286,13 +286,13 @@ class CategoriesController implements ControllerProviderInterface
             $form = $app['form.factory']
                 ->createBuilder(new DeleteForm(), $data)->getForm();
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong with creating form';
+            $errors[] = 'Coś poszło nie tak podczas tworzenia formularza';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Category not found'
+                    'content' => 'Kategoria nie znaleziona'
                 )
             );
             return $app['twig']->render(
@@ -303,7 +303,7 @@ class CategoriesController implements ControllerProviderInterface
         $form->handleRequest($request);
         
         if ($form->isValid()) {
-            if ($form->get('No')->isClicked()) {
+            if ($form->get('Nie')->isClicked()) {
                 return $app->redirect(
                     $app['url_generator']->generate(
                         '/categories/'
@@ -323,7 +323,8 @@ class CategoriesController implements ControllerProviderInterface
                         'message',
                         array(
                             'type' => 'success',
-                            'content' => 'Category has been deleted. Ads from this category are in Pozostałe category.'
+                            'content' => 'Kategoria została usunięta.
+                            Wszystkie ogłoszenia z niej zostały przeniesione do kategorii Pozostałe.'
                         )
                     );
                     return $app->redirect(
@@ -333,7 +334,7 @@ class CategoriesController implements ControllerProviderInterface
                         301
                     );
                 } catch (\Exception $e) {
-                    $errors[] = 'Something went wrong in deleting process';
+                    $errors[] = 'Coś poszło nie tak podczas przetwarzania danych';
 
                     return $app['twig']->render(
                         'errors/404.twig'
@@ -375,13 +376,13 @@ class CategoriesController implements ControllerProviderInterface
                 $paginator = array('page' => $page, 'pagesCount' => $pagesCount);
                 $this->view['ads'] = $ads;
             } catch (\Exception $e) {
-                $errors[] = 'Something went wrong in getting pages';
+                $errors[] = 'Coś poszło nie tak podczas przetwarzania danych';
 
                 $app['session']->getFlashBag()->add(
                     'message',
                     array(
                         'type' => 'danger',
-                        'content' => 'Ads not found'
+                        'content' => 'ogłoszenia nie znalezione'
                     )
                 );
                 return $app['twig']->render(
@@ -390,13 +391,13 @@ class CategoriesController implements ControllerProviderInterface
             }
 
         } catch (\Exception $e) {
-            $errors[] = 'Something went wrong';
+            $errors[] = 'Coś poszło nie tak';
 
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
                     'type' => 'danger',
-                    'content' => 'Category not fond'
+                    'content' => 'Kategoria nie znaleziona'
                 )
             );
             return $app['twig']->render(

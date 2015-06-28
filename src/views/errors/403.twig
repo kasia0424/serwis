@@ -11,11 +11,11 @@
             </div>
         {% endfor %}
 
-        <h1>Forbbiden!</h1>
-        <p>Sorry, you don't have access to this page.</p>
-        <p>Wrong neighborhood - don't mess around!</p>
+        <h1>{{ 'Forbbiden!' |trans }}</h1>
+        <p>{{ 'Sorry, you do not have access to this page.' |trans }}</p>
+        <p>{{ 'Wrong neighborhood - do not mess around!' |trans }}</p>
     </div>
 
-    <p><a href="{{ url('/ads/') }}" title="Home">Back to the homepage.</a></p>
+    <p><a href="{{ url('/ads/') }}" title="Home">{{ 'Back to the homepage.' |trans }}</a></p>
 
 {% endblock %}

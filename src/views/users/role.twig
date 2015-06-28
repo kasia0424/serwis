@@ -4,12 +4,12 @@
 
 {% block content %}
     <h1 class="text-center">
-        Change user's role
+        {{ 'Change users role' |trans }}
     </h1>
 
     <h3 class="not">
-        <strong>User: </strong> {{ user.login }} <br/>
-        <strong> Role:</strong> {{ user.role }}
+        <strong>{{ 'User' |trans }} </strong> {{ user.login }} <br/>
+        <strong> {{ 'Role' |trans }}</strong> {{ user.role }}
     </h3>
     <div class="smallest">
         <form action="" method="post">
@@ -19,9 +19,9 @@
 
     <h4>
         {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ url('/user/panel') }}" title="Users index" class="label label-primary text-uppercase">Back to panel</a>
+            <a href="{{ url('/user/panel') }}" title="Users index" class="label label-primary text-uppercase">{{ 'Back to panel' |trans }}</a>
         {% else %}
-            <a href="{{ url('/user/account') }}" title="Users account" class="label label-primary text-uppercase">Back to account</a>
+            <a href="{{ url('/user/account') }}" title="Users account" class="label label-primary text-uppercase">{{ 'Back to account' |trans }}</a>
         {% endif %}
     </h4>
 {% endblock %}
