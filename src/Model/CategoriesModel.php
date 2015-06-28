@@ -126,7 +126,7 @@ class CategoriesModel
 
 
     /**
-     * Save category.
+     * Saves category.
      *
      * @access public
      * @param array $category Categories data
@@ -149,7 +149,7 @@ class CategoriesModel
 
 
     /**
-     * Delete category
+     * Deletes category
      *
      * @access public
      * @param integer $id Record Id
@@ -165,7 +165,7 @@ class CategoriesModel
 
     //porcjowanie
     /**
-     * Get all categories on page.
+     * Gets all categories on page.
      *
      * @access public
      * @param integer $page Page number
@@ -216,7 +216,7 @@ class CategoriesModel
     
     //paginacja do view
     /**
-     * Get all categories on page.
+     * Gets all categories on page.
      *
      * @access public
      * @param integer $page Page number

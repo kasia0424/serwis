@@ -58,10 +58,10 @@ class UsersModel
 
     
     /**
-     * Gets users phonr number
+     * Gets users phone number
      *
      * @access public
-     * @param integer $id Record Id
+     * @param integer $id User Id
      * @return array Result
      */
     public function getPhone($id)
@@ -268,7 +268,7 @@ class UsersModel
      * Add user's phone number
      *
      * @param array $data Form data
-     * @param integer $id Record Id
+     * @param integer $id User Id
      * @access public
      * @retun mixed Result
      */
@@ -285,7 +285,7 @@ class UsersModel
     }
 
     /**
-     * Update user
+     * Updates user
      *
      * @param array $data Form data
      * @param string $password User password
@@ -320,7 +320,7 @@ class UsersModel
     }
 
     /**
-     * Delete user
+     * Deletes user
      *
      * @param integer $id Record Id
      * @access public
@@ -334,9 +334,9 @@ class UsersModel
     
     
     /**
-     * Delete user phone
+     * Deletes user phone
      *
-     * @param $id
+     * @param integer $id User Id
      * @access public
      * @retun mixed Result
      */
@@ -347,7 +347,7 @@ class UsersModel
     }
 
     /**
-     * Get user by id
+     * Gets user by id
      *
      * @access public
      * @param integer $id Record Id
@@ -398,7 +398,7 @@ class UsersModel
 
 
     /**
-     * Get user list
+     * Gets users list
      *
      * @access public
      * @return array Result
@@ -415,7 +415,7 @@ class UsersModel
     
     
     /**
-     * Get user information by id
+     * Counts all users ads
      *
      * @access public
      * @return array Result
@@ -434,7 +434,7 @@ class UsersModel
 
 
     /**
-     * Get user information by id
+     * Gets user information by id
      *
      * @param integer $id Record Id
      *
@@ -448,7 +448,7 @@ class UsersModel
     }
 
     /**
-     * Change user's role
+     * Changes user's role
      *
      * @param  array $data Form data
      *
@@ -462,7 +462,7 @@ class UsersModel
     }
 
     /**
-     * Get current logged user id
+     * Gets current logged user id
      *
      * @param Silex\Application $app Silex application
      *
@@ -478,7 +478,7 @@ class UsersModel
     }
 
     /**
-     * Get information about actual logged user
+     * Gets information about logged user
      *
      * @param Silex\Application $app Silex application
      *
@@ -501,9 +501,9 @@ class UsersModel
 
 
     /**
-     * Get user information by ad id
+     * Gets user information by ad id
      *
-     * @param integer $id Record Id
+     * @param integer $id Ad Id
      *
      * @access public
      * @return array Result
@@ -532,7 +532,7 @@ class UsersModel
     }
 
     /**
-     * Get all ads on page.
+     * Gets all ads on page.
      *
      * @access public
      * @param integer $page Page number
@@ -578,7 +578,7 @@ class UsersModel
     
     //paginacja userów w panelu
     /**
-     * Get all users on page.
+     * Gets all users on page.
      *
      * @access public
      * @param integer $page Page number

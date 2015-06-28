@@ -45,8 +45,6 @@ class PhotosController implements ControllerProviderInterface
             ->value('id', 1)->bind('/photos/upload');
         $photosController->get('/{id}', array($this, 'upload'))
             ->bind('/photos/');
-        // $photosController->get('/delete/{photo}/{id}/{user}', array($this, 'delete'))
-            // ->value('id', 1)->bind('/photos/delete');
         return $photosController;
     }
 
@@ -60,13 +58,28 @@ class PhotosController implements ControllerProviderInterface
      */
     public function upload(Application $app, Request $request)
     {
-        $adId =(int)$request->get('id', 0);
+        try {
+            $adId =(int)$request->get('id', 0);
 
-        $adsModel = new AdsModel($app);
-        $usersModel = new UsersModel($app);
+            $adsModel = new AdsModel($app);
+            $usersModel = new UsersModel($app);
 
-        $form = $app['form.factory']
-            ->createBuilder(new FilesForm(), array('ad_id'=>$adId))->getForm();
+            $form = $app['form.factory']
+                ->createBuilder(new FilesForm(), array('ad_id'=>$adId))->getForm();
+        } catch (\Exception $e) {
+            $errors[] = 'Something went wrong while preparing form';
+
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger',
+                    'content' => 'Something went wrong while preparing form'
+                )
+            );
+            return $app['twig']->render(
+                'errors/404.twig'
+            );
+        }
 
         if ($request->isMethod('post')) {
             $form->handleRequest($request);
@@ -79,11 +92,6 @@ class PhotosController implements ControllerProviderInterface
 
                     $photosModel = new PhotosModel($app);
 
-                    $originalFilename = $files['image']->getClientOriginalName();
-
-                    $newFilename = $photosModel->createName($originalFilename);
-                    $files['image']->move($path, $newFilename);
-
                     $adId = $data['ad_id'];
                     $ad = $adsModel->getAd($adId);
                     $idLoggedUser = $usersModel->getIdCurrentUser($app);
@@ -91,9 +99,9 @@ class PhotosController implements ControllerProviderInterface
                         $photo = $photosModel->getPhoto($adId);
                         
                         if ($photo == null) {
-                            $photosModel->saveFile($newFilename, $adId);
+                            $photosModel->saveImage($files, $path, $adId);
                         } else {
-                            $photosModel->updateFile($newFilename, $data);
+                            $photosModel->updateImage($files, $path, $adId);
                         }
                         $flag= true;
                     } else {

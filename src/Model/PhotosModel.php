@@ -42,12 +42,51 @@ class PhotosModel
     }
 
 
+
+    /**
+     * Save image.
+     *
+     * @access public
+     * @param array $image Image data from request
+     * @param string $mediaPath Path to media folder on disk
+     * @param integer $adId Ad Id
+     * @throws \PDOException
+     * @return mixed Result
+     */
+    public function saveImage($image, $mediaPath, $adId)
+    {
+        try {
+            $originalFilename = $image['image']->getClientOriginalName();
+            $newFilename = $this->createName($originalFilename);
+            $image['image']->move($mediaPath, $newFilename);
+            $this->saveFile($newFilename, $adId);
+            return true;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
+    }
+
+
+    /**
+     * Save filename in database.
+     *
+     * @access protected
+     * @param string $name Filename
+     * @param integer $adId Ad Id
+     * @return mixed Result
+     */
+    protected function saveFilename($name, $adId)
+    {
+        return $this->db->insert('files', array('name' => $name, 'ad_id' => $adId));
+    }
+
+
     /**
      * Save file.
      *
      * @access public
      * @param array $name File namea
-     * @param integer $id Record Id
+     * @param integer $adId Ad Id
      * @retun mixed Result
      */
     public function saveFile($name, $adId)
@@ -56,19 +95,41 @@ class PhotosModel
         $this->_db->executeQuery($sql, array($name, (int)$adId));
     }
 
+    /**
+     * Update image.
+     *
+     * @access public
+     * @param array $image Image data from request
+     * @param string $mediaPath Path to media folder on disk
+     * @param integer $adId Ad Id
+     * @throws \PDOException
+     * @return mixed Result
+     */
+    public function updateImage($image, $mediaPath, $adId)
+    {
+        try {
+            $originalFilename = $image['image']->getClientOriginalName();
+            $newFilename = $this->createName($originalFilename);
+            $image['image']->move($mediaPath, $newFilename);
+            $this->updateFile($newFilename, $adId);
+            return true;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
+    }
 
     /**
      * Update file.
      *
      * @access public
      * @param array $name File name
-     * @param array $data Form data
+     * @param integer $adId Ad Id
      * @retun mixed Result
      */
-    public function updateFile($name, $data)
+    public function updateFile($name, $adId)
     {
         $sql = 'UPDATE `so_photos` SET `name`=? WHERE `ad_id` = ?';
-        $this->_db->executeQuery($sql, array($name, $data['ad_id']));
+        $this->_db->executeQuery($sql, array($name, $adId));
     }
 
 
@@ -145,7 +206,7 @@ class PhotosModel
     
     
     /**
-     * Delete photo
+     * Deletes photo
      *
      * @access public
      * @param integer $id Record Id

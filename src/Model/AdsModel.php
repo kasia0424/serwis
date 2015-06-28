@@ -40,7 +40,7 @@ class AdsModel
     }
 
     /**
-     * Gets all ads.
+     * Gets all ads
      *
      * @access public
      * @return array Result
@@ -55,7 +55,7 @@ class AdsModel
 
 
     /**
-     * Gets single ads data.
+     * Gets single ad data
      *
      * @access public
      * @param integer $id Record Id
@@ -80,46 +80,7 @@ class AdsModel
 
 
     /**
-     * Ads photo to ad
-     *
-     * @access public
-     * @param integer $id Record Id
-     * @return array Result
-     */
-    public function adPhoto($id)
-    {
-        if ($id != '') {
-            $query = 'SELECT id FROM so_photos
-                ORDER BY id DESC LIMIT 1';
-            $result = $this->_db->executeQuery($query);
-
-            $sql = 'UPDATE so_ads SET photo_id= ? WHERE id = ?';
-            $this->db->executeQuery($sql, array((int) $result,(int) $id));
-
-        } else {
-            return array();
-        }
-    }
-    
-    /**
-     * Gets last added ad
-     *
-     * @access public
-     * @return array Result
-     */
-    public function getLastAd()
-    {
-        $sql = 'SELECT id
-            FROM so_ads
-            ORDER BY id DESC
-            LIMIT 1';
-        $result = $this->db->fetchAssoc($sql);
-        return $result;
-    }
-
-
-    /**
-     * Update ad
+     * Updates ad
      *
      * @access public
      * @param array $data Form data
@@ -149,10 +110,10 @@ class AdsModel
 
 
     /**
-     * Save ad.
+     * Saves ad
      *
      * @access public
-     * @param array $ad Ads data
+     * @param array $ad Ad data
      * @retun mixed Result
      */
     public function saveAd($ad)
@@ -173,7 +134,7 @@ class AdsModel
 
 
     /**
-     * Delete ad
+     * Deletes ad
      *
      * @access public
      * @param integer $id Record Id
@@ -187,7 +148,7 @@ class AdsModel
     }
     
     /**
-     * Delete users ads
+     * Deletes user's ads
      *
      * @access public
      * @param integer $id Record Id
@@ -201,7 +162,7 @@ class AdsModel
     
     //porcjowanie
     /**
-     * Get all ads on page.
+     * Gets all ads on page
      *
      * @access public
      * @param integer $page Page number
@@ -221,7 +182,7 @@ class AdsModel
     }
     
     /**
-     * Counts ad pages.
+     * Counts ad pages
      *
      * @access public
      * @param integer $limit Number of records on single page

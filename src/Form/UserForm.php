@@ -38,8 +38,9 @@ class UserForm extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        return  $builder->add(
-            'id',
+        return  $builder
+            ->add(
+                'id',
                 'hidden',
                 array(
                     'constraints' => array(
