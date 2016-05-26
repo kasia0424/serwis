@@ -30,9 +30,9 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver'    => 'pdo_mysql',
         'host'      => 'localhost',
-        'dbname'    => '12_sipel',
-        'user'      => '12_sipel',
-        'password'  => 'N1i4m0q9a3',
+        'dbname'    => 'dbname',
+        'user'      => 'user',
+        'password'  => 'password',
         'charset'   => 'utf8',
     ),
 ));
