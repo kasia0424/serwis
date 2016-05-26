@@ -1,7 +1,7 @@
 <IfModule mod_rewrite.c>
     Options -MultiViews
     RewriteEngine On
-    RewriteBase /~12_sipel/serwis/
+    RewriteBase /username/serwis/
 	RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ web/index.php [QSA,L]
